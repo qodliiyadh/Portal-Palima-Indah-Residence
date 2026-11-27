@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Palima Indah Residence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #34D399;
+            --primary-dark: #10B981;
+            --primary-light: #A7F3D0;
+            --secondary: #6EE7B7;
+            --accent: #FCD34D;
+            --bg-main: #F0FDF4;
+            --bg-card: #FFFFFF;
+            --text-dark: #064E3B;
+            --text-medium: #047857;
+            --text-light: #6B7280;
+            --border: #D1FAE5;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --info: #3B82F6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-main) 0%, #ECFDF5 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s ease-in-out infinite;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .loading-subtext {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-details h3 {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 2px;
+        }
+
+        .logo-subtext {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .time-section {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #D1FAE5 100%);
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .time {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .date {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .prayer-times {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .prayer-item {
+            text-align: center;
+            padding: 8px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .prayer-name {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 3px;
+        }
+
+        .prayer-time {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .prayer-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .prayer-item.active .prayer-name,
+        .prayer-item.active .prayer-time {
+            color: white;
+        }
+
+        .announcements {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .announcement-item {
+            padding: 15px;
+            background: var(--bg-main);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .announcement-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .announcement-text {
+            font-size: 12px;
+            color: var(--text-medium);
+            margin-bottom: 8px;
+        }
+
+        .announcement-time {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .menu-card:active {
+            transform: scale(0.95);
+        }
+
+        .menu-card:hover {
+            box-shadow: 0 6px 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .menu-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .menu-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .menu-desc {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .schedule-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--bg-main);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .schedule-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .schedule-details {
+            flex: 1;
+        }
+
+        .schedule-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .schedule-time {
+            font-size: 12px;
+            color: var(--text-medium);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-main);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: var(--bg-main);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload-icon {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .file-upload-text {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .file-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--bg-main);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-dark);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--text-light);
+            color: white;
+        }
+
+        .bill-card {
+            background: var(--bg-main);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .bill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .bill-month {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .bill-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-paid {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-verified {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .bill-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .bill-label {
+            color: var(--text-medium);
+        }
+
+        .bill-value {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .bill-total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bill-total-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .bill-total-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .complaint-card, .letter-card, .resident-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .card-date {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .card-content {
+            font-size: 13px;
+            color: var(--text-medium);
+            margin-bottom: 10px;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .cashbook-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: var(--bg-main);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+
+        .transaction-date {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .transaction-amount {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .transaction-amount.income {
+            color: var(--primary-dark);
+        }
+
+        .transaction-amount.expense {
+            color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">🏘️</div>
+        <div class="loading-text">Palima Indah Residence</div>
+        <div class="loading-subtext">Memuat portal warga...</div>
+    </div>
+
+    <div id="app"></div>
+
+    <script>
+        // ===== DATABASE & STATE MANAGEMENT =====
+        const DB = {
+            users: JSON.parse(localStorage.getItem('users') || '[]'),
+            bills: JSON.parse(localStorage.getItem('bills') || '[]'),
+            complaints: JSON.parse(localStorage.getItem('complaints') || '[]'),
+            letters: JSON.parse(localStorage.getItem('letters') || '[]'),
+            residents: JSON.parse(localStorage.getItem('residents') || '[]'),
+            transactions: JSON.parse(localStorage.getItem('transactions') || '[]'),
+            announcements: JSON.parse(localStorage.getItem('announcements') || '[]'),
+            schedules: JSON.parse(localStorage.getItem('schedules') || '[]'),
+            
+            save(key) {
+                localStorage.setItem(key, JSON.stringify(this[key]));
+            },
+            
+            init() {
+                // Demo data
+                if (this.users.length === 0) {
+                    this.users = [
+                        {
+                            id: 1,
+                            username: 'warga1',
+                            password: '123456',
+                            name: 'Budi Santoso',
+                            role: 'warga',
+                            address: 'Blok A No. 15',
+                            phone: '081234567890',
+                            ktp: '3201234567890001'
+                        },
+                        {
+                            id: 2,
+                            username: 'pengurus1',
+                            password: 'admin123',
+                            name: 'Ahmad RT',
+                            role: 'pengurus',
+                            address: 'Blok B No. 3',
+                            phone: '081298765432'
+                        }
+                    ];
+                    this.save('users');
+                }
+                
+                if (this.announcements.length === 0) {
+                    this.announcements = [
+                        {
+                            id: 1,
+                            title: 'Jadwal Ronda Minggu Ini',
+                            content: 'Ronda malam hari dilaksanakan pukul 22.00 - 05.00 WIB. Mohon kerjasamanya.',
+                            date: new Date().toISOString(),
+                            priority: 'high'
+                        },
+                        {
+                            id: 2,
+                            title: 'Kerja Bakti Minggu Depan',
+                            content: 'Kerja bakti bersama diadakan hari Minggu, 30 November 2026 pukul 07.00 WIB.',
+                            date: new Date().toISOString(),
+                            priority: 'medium'
+                        }
+                    ];
+                    this.save('announcements');
+                }
+                
+                if (this.schedules.length === 0) {
+                    this.schedules = [
+                        {
+                            id: 1,
+                            type: 'ronda',
+                            title: 'Ronda Malam',
+                            time: 'Setiap Hari 22.00 - 05.00',
+                            icon: '🛡️'
+                        },
+                        {
+                            id: 2,
+                            type: 'activity',
+                            title: 'Senam Pagi',
+                            time: 'Minggu, 07.00 WIB',
+                            icon: '🤸'
+                        }
+                    ];
+                    this.save('schedules');
+                }
+            }
+        };
+
+        const STATE = {
+            currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
+            currentPage: 'home',
+            
+            setUser(user) {
+                this.currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+            },
+            
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('currentUser');
+            }
+        };
+
+        // ===== UTILS =====
+        const formatRupiah = (num) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(num);
+        };
+
+        const formatDate = (date) => {
+            return new Intl.DateTimeFormat('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(new Date(date));
+        };
+
+        const formatDateTime = (date) => {
+            return new Intl.DateTimeFormat('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(new Date(date));
+        };
+
+        const getInitials = (name) => {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        };
+
+        const uploadFile = async (file) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.readAsDataURL(file);
+            });
+        };
+
+        // ===== PRAYER TIMES =====
+        const getPrayerTimes = () => {
+            const now = new Date();
+            const hour = now.getHours();
+            
+            const times = [
+                { name: 'Subuh', time: '04:30', active: hour >= 4 && hour < 6 },
+                { name: 'Dzuhur', time: '12:00', active: hour >= 12 && hour < 15 },
+                { name: 'Ashar', time: '15:15', active: hour >= 15 && hour < 18 },
+                { name: 'Maghrib', time: '18:05', active: hour >= 18 && hour < 19 },
+                { name: 'Isya', time: '19:20', active: hour >= 19 || hour < 4 }
+            ];
+            
+            return times;
+        };
+
+        // ===== COMPONENTS =====
+        const LoginPage = () => {
+            const handleLogin = (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                const user = DB.users.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    STATE.setUser(user);
+                    render();
+                } else {
+                    alert('Username atau password salah!');
+                }
+            };
+            
+            return `
+                <div class="login-container">
+                    <div class="login-box">
+                        <div class="login-logo">
+                            <div class="login-logo-icon">🏘️</div>
+                            <div class="logo-text">Palima Indah</div>
+                            <div class="logo-subtext">Portal Warga Digital</div>
+                        </div>
+                        
+                        <form onsubmit="return false;" id="loginForm">
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" id="username" class="form-input" placeholder="Masukkan username" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="password" class="form-input" placeholder="Masukkan password" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Masuk</button>
+                            
+                            <div style="margin-top: 20px; padding: 15px; background: var(--bg-main); border-radius: 12px; font-size: 12px; color: var(--text-medium);">
+                                <strong>Demo Login:</strong><br>
+                                Warga: warga1 / 123456<br>
+                                Pengurus: pengurus1 / admin123
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+        };
+
+        const Header = () => {
+            const user = STATE.currentUser;
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const date = formatDate(now);
+            const prayerTimes = getPrayerTimes();
+            
+            return `
+                <div class="header">
+                    <div class="header-top">
+                        <div class="user-info">
+                            <div class="avatar">${getInitials(user.name)}</div>
+                            <div class="user-details">
+                                <h3>${user.name}</h3>
+                                <p>${user.role === 'warga' ? 'Warga' : 'Pengurus RT'} • ${user.address || '-'}</p>
+                            </div>
+                        </div>
+                        <button class="logout-btn" onclick="logout()">Keluar</button>
+                    </div>
+                    
+                    <div class="logo-section">
+                        <div class="logo">🏘️</div>
+                        <div class="logo-text">Palima Indah Residence</div>
+                        <div class="logo-subtext">Portal Warga Digital</div>
+                    </div>
+                    
+                    <div class="time-section">
+                        <div class="time" id="currentTime">${time}</div>
+                        <div class="date">${date}</div>
+                        
+                        <div class="prayer-times">
+                            ${prayerTimes.map(p => `
+                                <div class="prayer-item ${p.active ? 'active' : ''}">
+                                    <div class="prayer-name">${p.name}</div>
+                                    <div class="prayer-time">${p.time}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const Announcements = () => {
+            return `
+                <div class="announcements">
+                    <div class="section-title">📢 Pengumuman Terkini</div>
+                    ${DB.announcements.map(a => `
+                        <div class="announcement-item">
+                            <div class="announcement-title">${a.title}</div>
+                            <div class="announcement-text">${a.content}</div>
+                            <div class="announcement-time">${formatDateTime(a.date)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        const MenuGrid = () => {
+            const user = STATE.currentUser;
+            const isWarga = user.role === 'warga';
+            
+            const menus = isWarga ? [
+                { id: 'bills', icon: '💰', title: 'Pembayaran Iuran', desc: 'Tagihan & riwayat' },
+                { id: 'complaints', icon: '📝', title: 'Pengaduan', desc: 'Laporkan masalah', badge: 2 },
+                { id: 'letters', icon: '📄', title: 'Pengajuan Surat', desc: 'Buat surat RT' },
+                { id: 'profile', icon: '👤', title: 'Data Pribadi', desc: 'Lihat profil' }
+            ] : [
+                { id: 'residents', icon: '👥', title: 'Data Warga', desc: 'Kelola penduduk' },
+                { id: 'cashbook', icon: '💼', title: 'Buku Kas RT', desc: 'Laporan keuangan' },
+                { id: 'cctv', icon: '📹', title: 'Akses CCTV', desc: 'Pantau keamanan' },
+                { id: 'verify', icon: '✅', title: 'Verifikasi', desc: 'Iuran & pengajuan', badge: 5 }
+            ];
+            
+            return `
+                <div class="menu-grid">
+                    ${menus.map(m => `
+                        <div class="menu-card" onclick="navigateTo('${m.id}')">
+                            ${m.badge ? `<div class="badge">${m.badge}</div>` : ''}
+                            <div class="menu-icon">${m.icon}</div>
+                            <div class="menu-title">${m.title}</div>
+                            <div class="menu-desc">${m.desc}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        const Schedules = () => {
+            return `
+                <div class="schedule-section">
+                    <div class="section-title">📅 Jadwal Kegiatan</div>
+                    ${DB.schedules.map(s => `
+                        <div class="schedule-item">
+                            <div class="schedule-icon">${s.icon}</div>
+                            <div class="schedule-details">
+                                <div class="schedule-title">${s.title}</div>
+                                <div class="schedule-time">${s.time}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        const BottomNav = () => {
+            const items = [
+                { id: 'home', icon: '🏠', label: 'Beranda' },
+                { id: 'activity', icon: '📋', label: 'Aktivitas' },
+                { id: 'info', icon: 'ℹ️', label: 'Info' }
+            ];
+            
+            return `
+                <div class="bottom-nav">
+                    ${items.map(item => `
+                        <div class="nav-item ${STATE.currentPage === item.id ? 'active' : ''}" onclick="navigateTo('${item.id}')">
+                            <div class="nav-icon">${item.icon}</div>
+                            <div class="nav-label">${item.label}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+
+        // ===== PAGES =====
+        const HomePage = () => {
+            return `
+                ${Header()}
+                ${Announcements()}
+                ${MenuGrid()}
+                ${Schedules()}
+                ${BottomNav()}
+            `;
+        };
+
+        const BillsPage = () => {
+            const userId = STATE.currentUser.id;
+            let userBills = DB.bills.filter(b => b.userId === userId);
+            
+            // Generate demo bills if none exist
+            if (userBills.length === 0) {
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'];
+                months.forEach((month, idx) => {
+                    DB.bills.push({
+                        id: Date.now() + idx,
+                        userId: userId,
+                        month: month + ' 2026',
+                        items: [
+                            { name: 'Iuran Keamanan', amount: 100000 },
+                            { name: 'Iuran Kebersihan', amount: 50000 },
+                            { name: 'Iuran Listrik Jalan', amount: 25000 }
+                        ],
+                        total: 175000,
+                        status: idx < 2 ? 'verified' : idx === 2 ? 'paid' : 'pending',
+                        proof: idx < 3 ? 'uploaded' : null,
+                        paidDate: idx < 3 ? new Date().toISOString() : null
+                    });
+                });
+                DB.save('bills');
+                userBills = DB.bills.filter(b => b.userId === userId);
+            }
+            
+            return `
+                <div class="container">
+                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
+                        <h2 class="modal-title">💰 Pembayaran Iuran</h2>
+                        <button class="close-btn" onclick="navigateTo('home')">×</button>
+                    </div>
+                    
+                    ${userBills.map(bill => `
+                        <div class="bill-card">
+                            <div class="bill-header">
+                                <div class="bill-month">${bill.month}</div>
+                                <div class="bill-status ${
+                                    bill.status === 'verified' ? 'status-verified' : 
+                                    bill.status === 'paid' ? 'status-paid' : 
+                                    'status-pending'
+                                }">
+                                    ${
+                                        bill.status === 'verified' ? '✓ Terverifikasi' : 
+                                        bill.status === 'paid' ? '⏳ Menunggu Verifikasi' : 
+                                        'Belum Dibayar'
+                                    }
+                                </div>
+                            </div>
+                            
+                            ${bill.items.map(item => `
+                                <div class="bill-detail">
+                                    <span class="bill-label">${item.name}</span>
+                                    <span class="bill-value">${formatRupiah(item.amount)}</span>
+                                </div>
+                            `).join('')}
+                            
+                            <div class="bill-total">
+                                <span class="bill-total-label">Total Tagihan</span>
+                                <span class="bill-total-value">${formatRupiah(bill.total)}</span>
+                            </div>
+                            
+                            ${bill.status === 'pending' ? `
+                                <button class="btn btn-primary" style="margin-top: 15px;" onclick="showPaymentModal(${bill.id})">
+                                    Bayar Sekarang
+                                </button>
+                            ` : bill.proof ? `
+                                <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 10px; font-size: 12px; color: var(--text-medium);">
+                                    📎 Bukti transfer telah diunggah<br>
+                                    ${bill.paidDate ? formatDateTime(bill.paidDate) : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                ${BottomNav()}
+            `;
+        };
+
+        const ComplaintsPage = () => {
+            const userId = STATE.currentUser.id;
+            const userComplaints = DB.complaints.filter(c => c.userId === userId);
+            
+            return `
+                <div class="container">
+                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
+                        <h2 class="modal-title">📝 Pengaduan Warga</h2>
+                        <button class="close-btn" onclick="navigateTo('home')">×</button>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="margin-bottom: 20px;" onclick="showComplaintModal()">
+                        + Buat Pengaduan Baru
+                    </button>
+                    
+                    ${userComplaints.length === 0 ? `
+                        <div class="empty-state">
+                            <div class="empty-icon">📝</div>
+                            <div class="empty-text">Belum ada pengaduan</div>
+                        </div>
+                    ` : userComplaints.map(c => `
+                        <div class="complaint-card">
+                            <div class="card-header">
+                                <div class="card-title">${c.title}</div>
+                                <div class="bill-status ${
+                                    c.status === 'resolved' ? 'status-verified' : 
+                                    c.status === 'inprogress' ? 'status-paid' : 
+                                    'status-pending'
+                                }">
+                                    ${
+                                        c.status === 'resolved' ? '✓ Selesai' : 
+                                        c.status === 'inprogress' ? '⚙️ Diproses' : 
+                                        '⏳ Menunggu'
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-content">${c.description}</div>
+                            ${c.image ? `<img src="${c.image}" class="card-image" alt="Foto pengaduan">` : ''}
+                            <div class="card-date">Dibuat: ${formatDateTime(c.date)}</div>
+                            ${c.response ? `
+                                <div style="margin-top: 10px; padding: 12px; background: var(--bg-main); border-radius: 10px; font-size: 12px;">
+                                    <strong>Tanggapan RT:</strong><br>${c.response}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                ${BottomNav()}
+            `;
+        };
+
+        const LettersPage = () => {
+            const userId = STATE.currentUser.id;
+            const userLetters = DB.letters.filter(l => l.userId === userId);
+            
+            return `
+                <div class="container">
+                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
+                        <h2 class="modal-title">📄 Pengajuan Surat</h2>
+                        <button class="close-btn" onclick="navigateTo('home')">×</button>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="margin-bottom: 20px;" onclick="showLetterModal()">
+                        + Ajukan Surat Baru
+                    </button>
+                    
+                    ${userLetters.length === 0 ? `
+                        <div class="empty-state">
+                            <div class="empty-icon">📄</div>
+                            <div class="empty-text">Belum ada pengajuan surat</div>
+                        </div>
+                    ` : userLetters.map(l => `
+                        <div class="letter-card">
+                            <div class="card-header">
+                                <div class="card-title">${l.type}</div>
+                                <div class="bill-status ${
+                                    l.status === 'approved' ? 'status-verified' : 
+                                    l.status === 'inreview' ? 'status-paid' : 
+                                    'status-pending'
+                                }">
+                                    ${
+                                        l.status === 'approved' ? '✓ Disetujui' : 
+                                        l.status === 'inreview' ? '👁️ Ditinjau' : 
+                                        '⏳ Menunggu'
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <strong>Keperluan:</strong> ${l.purpose}<br>
+                                ${l.documents ? `<strong>Dokumen:</strong> ${l.documents.length} file` : ''}
+                            </div>
+                            <div class="card-date">Diajukan: ${formatDateTime(l.date)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                ${BottomNav()}
+            `;
+        };
+
+        const ResidentsPage = () => {
+            if (STATE.currentUser.role !== 'pengurus') {
+                return `<div class="container"><div class="empty-state"><div class="empty-icon">🚫</div><div class="empty-text">Akses ditolak</div></div></div>`;
+            }
+            
+            // Generate demo residents
+            if (DB.residents.length === 0) {
+                for (let i = 1; i <= 10; i++) {
+                    DB.residents.push({
+                        id: i,
+                        name: `Warga ${i}`,
+                        address: `Blok ${String.fromCharCode(65 + (i % 5))} No. ${i}`,
+                        phone: `08123456${1000 + i}`,
+                        ktp: `320123456789000${i}`,
+                        verified: i <= 7
+                    });
+                }
+                DB.save('residents');
+            }
+            
+            return `
+                <div class="container">
+                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
+                        <h2 class="modal-title">👥 Data Warga</h2>
+                        <button class="close-btn" onclick="navigateTo('home')">×</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="🔍 Cari nama, alamat, atau KTP..." id="residentSearch" oninput="searchResidents()">
+                    </div>
+                    
+                    <div id="residentList">
+                        ${DB.residents.map(r => `
+                            <div class="resident-card">
+                                <div class="card-header">
+                                    <div class="card-title">${r.name}</div>
+                                    <div class="bill-status ${r.verified ? 'status-verified' : 'status-pending'}">
+                                        ${r.verified ? '✓ Terverifikasi' : '⏳ Belum'}
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    📍 ${r.address}<br>
+                                    📱 ${r.phone}<br>
+                                    🆔 ${r.ktp}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ${BottomNav()}
+            `;
+        };
+
+        const CashbookPage = () => {
+            if (STATE.currentUser.role !== 'pengurus') {
+                return `<div class="container"><div class="empty-state"><div class="empty-icon">🚫</div><div class="empty-text">Akses ditolak</div></div></div>`;
+            }
+            
+            // Generate demo transactions
+            if (DB.transactions.length === 0) {
+                DB.transactions = [
+                    { id: 1, type: 'income', title: 'Iuran Warga - Januari', amount: 5250000, date: new Date('2026-01-15').toISOString() },
+                    { id: 2, type: 'expense', title: 'Pembayaran Satpam', amount: 2000000, date: new Date('2026-01-20').toISOString() },
+                    { id: 3, type: 'expense', title: 'Perawatan Taman', amount: 500000, date: new Date('2026-02-05').toISOString() },
+                    { id: 4, type: 'income', title: 'Iuran Warga - Februari', amount: 5425000, date: new Date('2026-02-15').toISOString() },
+                    { id: 5, type: 'expense', title: 'Listrik Area Umum', amount: 350000, date: new Date('2026-02-25').toISOString() }
+                ];
+                DB.save('transactions');
+            }
+            
+            const totalIncome = DB.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+            const totalExpense = DB.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+            const balance = totalIncome - totalExpense;
+            
+            return `
+                <div class="container">
+                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
+                        <h2 class="modal-title">💼 Buku Kas RT</h2>
+                        <button class="close-btn" onclick="navigateTo('home')">×</button>
+                    </div>
+                    
+                    <div class="cashbook-summary">
+                        <div class="summary-card">
+                            <div class="summary-label">Saldo</div>
+                            <div class="summary-value" style="color: var(--primary-dark);">${formatRupiah(balance).replace('Rp', '')}</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-label">Pemasukan</div>
+                            <div class="summary-value" style="color: var(--primary-dark);">+${formatRupiah(totalIncome).replace('Rp', '')}</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-label">Pengeluaran</div>
+                            <div class="summary-value" style="color: var(--danger);">-${formatRupiah(totalExpense).replace('Rp', '')}</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="margin-bottom: 20px;" onclick="showTransactionModal()">
+                        + Catat Transaksi
+                    </button>
+                    
+                    <div style="background: white; border-radius: 20px; padding: 20px;">
+                        <div class="section-title">📊 Riwayat Transaksi</div>
+                        ${DB.transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `
+                            <div class="transaction-item">
+                                <div class="transaction-info">
+                                    <div class="transaction-title">${t.title}</div>
+                                    <div class="transaction-date">${formatDateTime(t.date)}</div>
+                                </div>
+                                <div class="transaction-amount ${t.type}">
+                                    ${t.type === 'income' ? '+' : '-'}${formatRupiah(t.amount)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ${BottomNav()}
+            `;
+        };
+
+        const CCTVPage = () => {
+            if (STATE.currentUser.role !== 'pengurus') {
+                return `<div class="container"><div class="empty-state"><div class="empty-icon">🚫</div><div class="empty-text">Akses ditolak</div></div></div>`;
+            }
+            
+            return `
+                <div class="container">
+                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
+                        <h2 class="modal-title">📹 Akses CCTV</h2>
+                        <button class="close-btn" onclick="navigateTo('home')">×</button>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 20px; padding: 30px; text-align: center;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">📹</div>
+                        <h3 style="margin-bottom: 10px; color: var(--text-dark);">Akses Dashboard CCTV</h3>
+                        <p style="color: var(--text-medium); margin-bottom: 25px;">Silakan masukkan URL dashboard CCTV yang sudah terpasang di lingkungan Palima Indah.</p>
+                        
+                        <div class="form-group">
+                            <input type="url" id="cctvUrl" class="form-input" placeholder="https://contoh.com/cctv-dashboard" value="https://your-cctv-system.com">
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="openCCTV()">
+                            🔗 Buka Dashboard CCTV
+                        </button>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: var(--bg-main); border-radius: 12px; font-size: 12px; color: var(--text-medium); text-align: left;">
+                            <strong>Catatan:</strong><br>
+                            • Pastikan Anda sudah memiliki akses ke sistem CCTV<br>
+                            • Hubungi administrator jika URL atau akses bermasalah<br>
+                            • Dashboard akan dibuka di tab baru browser
+                        </div>
+                    </div>
+                </div>
+                ${BottomNav()}
+            `;
+        };
+
+        // ===== MODALS =====
+        const showModal = (content) => {
+            const modal = document.createElement('div');
+            modal.className = 'modal show';
+            modal.innerHTML = `<div class="modal-content">${content}</div>`;
+            modal.onclick = (e) => {
+                if (e.target === modal) closeModal();
+            };
+            document.body.appendChild(modal);
+        };
+
+        const closeModal = () => {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+        };
+
+        window.showPaymentModal = (billId) => {
+            const bill = DB.bills.find(b => b.id === billId);
+            
+            const content = `
+                <div class="modal-header">
+                    <h2 class="modal-title">Upload Bukti Transfer</h2>
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                </div>
+                
+                <div class="bill-detail" style="margin-bottom: 20px;">
+                    <span class="bill-label">Total Tagihan</span>
+                    <span style="font-size: 24px; font-weight: 700; color: var(--primary-dark);">${formatRupiah(bill.total)}</span>
+                </div>
+                
+                <div style="background: var(--bg-main); padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 13px;">
+                    <strong>Transfer ke:</strong><br>
+                    Bank BCA<br>
+                    No. Rek: 1234567890<br>
+                    a.n. RT 05 Palima Indah
+                </div>
+                
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label class="form-label">Upload Bukti Transfer *</label>
+                        <div class="file-upload" onclick="document.getElementById('proofFile').click()">
+                            <input type="file" id="proofFile" accept="image/*" onchange="previewFile(this, 'proofPreview')">
+                            <div class="file-upload-icon">📎</div>
+                            <div class="file-upload-text">Klik untuk upload gambar</div>
+                        </div>
+                        <div id="proofPreview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Catatan (Opsional)</label>
+                        <textarea id="paymentNote" class="form-textarea" placeholder="Tambahkan catatan jika ada..."></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="submitPayment(${billId})">
+                        Kirim Bukti Transfer
+                    </button>
+                </form>
+            `;
+            
+            showModal(content);
+        };
+
+        window.submitPayment = async (billId) => {
+            const fileInput = document.getElementById('proofFile');
+            const note = document.getElementById('paymentNote').value;
+            
+            if (!fileInput.files[0]) {
+                alert('Silakan upload bukti transfer terlebih dahulu');
+                return;
+            }
+            
+            const proof = await uploadFile(fileInput.files[0]);
+            
+            const bill = DB.bills.find(b => b.id === billId);
+            bill.status = 'paid';
+            bill.proof = proof;
+            bill.note = note;
+            bill.paidDate = new Date().toISOString();
+            
+            DB.save('bills');
+            closeModal();
+            navigateTo('bills');
+            alert('Bukti transfer berhasil dikirim! Menunggu verifikasi pengurus.');
+        };
+
+        window.showComplaintModal = () => {
+            const content = `
+                <div class="modal-header">
+                    <h2 class="modal-title">Buat Pengaduan Baru</h2>
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                </div>
+                
+                <form id="complaintForm">
+                    <div class="form-group">
+                        <label class="form-label">Judul Pengaduan *</label>
+                        <input type="text" id="complaintTitle" class="form-input" placeholder="Contoh: Lampu jalan mati" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Deskripsi Lengkap *</label>
+                        <textarea id="complaintDesc" class="form-textarea" placeholder="Jelaskan masalah secara detail..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Foto Pendukung (Opsional)</label>
+                        <div class="file-upload" onclick="document.getElementById('complaintImage').click()">
+                            <input type="file" id="complaintImage" accept="image/*" onchange="previewFile(this, 'imagePreview')">
+                            <div class="file-upload-icon">📷</div>
+                            <div class="file-upload-text">Upload foto jika ada</div>
+                        </div>
+                        <div id="imagePreview"></div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="submitComplaint()">
+                        Kirim Pengaduan
+                    </button>
+                </form>
+            `;
+            
+            showModal(content);
+        };
+
+        window.submitComplaint = async () => {
+            const title = document.getElementById('complaintTitle').value;
+            const desc = document.getElementById('complaintDesc').value;
+            const imageInput = document.getElementById('complaintImage');
+            
+            if (!title || !desc) {
+                alert('Judul dan deskripsi harus diisi');
+                return;
+            }
+            
+            let image = null;
+            if (imageInput.files[0]) {
+                image = await uploadFile(imageInput.files[0]);
+            }
+            
+            DB.complaints.push({
+                id: Date.now(),
+                userId: STATE.currentUser.id,
+                title,
+                description: desc,
+                image,
+                status: 'pending',
+                date: new Date().toISOString()
+            });
+            
+            DB.save('complaints');
+            closeModal();
+            navigateTo('complaints');
+            alert('Pengaduan berhasil dikirim!');
+        };
+
+        window.showLetterModal = () => {
+            const letterTypes = [
+                'Surat Keterangan Domisili',
+                'Surat Pengantar KTP',
+                'Surat Pengantar KK',
+                'Surat Keterangan Tidak Mampu',
+                'Surat Keterangan Usaha',
+                'Surat Pengantar Nikah'
+            ];
+            
+            const content = `
+                <div class="modal-header">
+                    <h2 class="modal-title">Ajukan Surat Baru</h2>
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                </div>
+                
+                <form id="letterForm">
+                    <div class="form-group">
+                        <label class="form-label">Jenis Surat *</label>
+                        <select id="letterType" class="form-select" required>
+                            <option value="">Pilih jenis surat...</option>
+                            ${letterTypes.map(t => `<option value="${t}">${t}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Keperluan *</label>
+                        <textarea id="letterPurpose" class="form-textarea" placeholder="Jelaskan keperluan surat..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Dokumen Pendukung</label>
+                        <div class="file-upload" onclick="document.getElementById('letterDocs').click()">
+                            <input type="file" id="letterDocs" multiple accept="image/*,.pdf" onchange="previewFiles(this, 'docsPreview')">
+                            <div class="file-upload-icon">📎</div>
+                            <div class="file-upload-text">Upload KTP, KK, atau dokumen lain</div>
+                        </div>
+                        <div id="docsPreview"></div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="submitLetter()">
+                        Ajukan Surat
+                    </button>
+                </form>
+            `;
+            
+            showModal(content);
+        };
+
+        window.submitLetter = async () => {
+            const type = document.getElementById('letterType').value;
+            const purpose = document.getElementById('letterPurpose').value;
+            const docsInput = document.getElementById('letterDocs');
+            
+            if (!type || !purpose) {
+                alert('Jenis surat dan keperluan harus diisi');
+                return;
+            }
+            
+            let documents = [];
+            if (docsInput.files.length > 0) {
+                for (let file of docsInput.files) {
+                    documents.push(await uploadFile(file));
+                }
+            }
+            
+            DB.letters.push({
+                id: Date.now(),
+                userId: STATE.currentUser.id,
+                type,
+                purpose,
+                documents,
+                status: 'pending',
+                date: new Date().toISOString()
+            });
+            
+            DB.save('letters');
+            closeModal();
+            navigateTo('letters');
+            alert('Pengajuan surat berhasil dikirim!');
+        };
+
+        window.showTransactionModal = () => {
+            const content = `
+                <div class="modal-header">
+                    <h2 class="modal-title">Catat Transaksi</h2>
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                </div>
+                
+                <form id="transactionForm">
+                    <div class="form-group">
+                        <label class="form-label">Jenis Transaksi *</label>
+                        <select id="transType" class="form-select" required>
+                            <option value="income">Pemasukan</option>
+                            <option value="expense">Pengeluaran</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Keterangan *</label>
+                        <input type="text" id="transTitle" class="form-input" placeholder="Contoh: Iuran warga Maret" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Jumlah (Rp) *</label>
+                        <input type="number" id="transAmount" class="form-input" placeholder="150000" required>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="submitTransaction()">
+                        Simpan Transaksi
+                    </button>
+                </form>
+            `;
+            
+            showModal(content);
+        };
+
+        window.submitTransaction = () => {
+            const type = document.getElementById('transType').value;
+            const title = document.getElementById('transTitle').value;
+            const amount = parseInt(document.getElementById('transAmount').value);
+            
+            if (!title || !amount) {
+                alert('Semua field harus diisi');
+                return;
+            }
+            
+            DB.transactions.push({
+                id: Date.now(),
+                type,
+                title,
+                amount,
+                date: new Date().toISOString()
+            });
+            
+            DB.save('transactions');
+            closeModal();
+            navigateTo('cashbook');
+        };
+
+        window.openCCTV = () => {
+            const url = document.getElementById('cctvUrl').value;
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                alert('Silakan masukkan URL dashboard CCTV terlebih dahulu');
+            }
+        };
+
+        window.previewFile = (input, previewId) => {
+            const preview = document.getElementById(previewId);
+            if (input.files[0]) {
+                preview.innerHTML = `<div class="file-preview">✓ ${input.files[0].name}</div>`;
+            }
+        };
+
+        window.previewFiles = (input, previewId) => {
+            const preview = document.getElementById(previewId);
+            if (input.files.length > 0) {
+                preview.innerHTML = `<div class="file-preview">✓ ${input.files.length} file dipilih</div>`;
+            }
+        };
+
+        window.searchResidents = () => {
+            const query = document.getElementById('residentSearch').value.toLowerCase();
+            const filtered = DB.residents.filter(r => 
+                r.name.toLowerCase().includes(query) ||
+                r.address.toLowerCase().includes(query) ||
+                r.ktp.includes(query)
+            );
+            
+            document.getElementById('residentList').innerHTML = filtered.map(r => `
+                <div class="resident-card">
+                    <div class="card-header">
+                        <div class="card-title">${r.name}</div>
+                        <div class="bill-status ${r.verified ? 'status-verified' : 'status-pending'}">
+                            ${r.verified ? '✓ Terverifikasi' : '⏳ Belum'}
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        📍 ${r.address}<br>
+                        📱 ${r.phone}<br>
+                        🆔 ${r.ktp}
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        // ===== NAVIGATION =====
+        window.navigateTo = (page) => {
+            STATE.currentPage = page;
+            render();
+        };
+
+        window.logout = () => {
+            if (confirm('Yakin ingin keluar?')) {
+                STATE.logout();
+                render();
+            }
+        };
+
+        // ===== RENDER =====
+        const render = () => {
+            const app = document.getElementById('app');
+            
+            if (!STATE.currentUser) {
+                app.innerHTML = LoginPage();
+                setTimeout(() => {
+                    document.getElementById('loginForm').onsubmit = (e) => {
+                        e.preventDefault();
+                        const username = document.getElementById('username').value;
+                        const password = document.getElementById('password').value;
+                        
+                        const user = DB.users.find(u => u.username === username && u.password === password);
+                        
+                        if (user) {
+                            STATE.setUser(user);
+                            render();
+                        } else {
+                            alert('Username atau password salah!');
+                        }
+                    };
+                }, 0);
+                return;
+            }
+            
+            const pages = {
+                home: HomePage,
+                bills: BillsPage,
+                complaints: ComplaintsPage,
+                letters: LettersPage,
+                residents: ResidentsPage,
+                cashbook: CashbookPage,
+                cctv: CCTVPage,
+                activity: HomePage,
+                info: HomePage,
+                profile: () => `<div class="container"><div class="empty-state"><div class="empty-icon">👤</div><div class="empty-text">Halaman profil dalam pengembangan</div></div>${BottomNav()}</div>`,
+                verify: () => `<div class="container"><div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Halaman verifikasi dalam pengembangan</div></div>${BottomNav()}</div>`
+            };
+            
+            app.innerHTML = `<div class="container">${(pages[STATE.currentPage] || HomePage)()}</div>`;
+            
+            // Update clock
+            if (STATE.currentPage === 'home') {
+                setInterval(() => {
+                    const timeEl = document.getElementById('currentTime');
+                    if (timeEl) {
+                        const now = new Date();
+                        timeEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    }
+                }, 1000);
+            }
+        };
+
+        // ===== INIT =====
+        window.addEventListener('DOMContentLoaded', () => {
+            DB.init();
+            
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hide');
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').remove();
+                }, 500);
+                render();
+            }, 2500);
+        });
+    </script>
+</body>
+</html>
