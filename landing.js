@@ -13,7 +13,7 @@
     <section class="public-section" id="jadwal-sholat"><div class="section-heading"><span class="eyebrow">WAKTU IBADAH</span><h2>Jadwal Salat</h2></div><div id="publicPrayer"></div></section>
     <section class="public-section public-services"><div class="section-heading"><span class="eyebrow">AKSES WARGA</span><h2>Layanan Portal</h2><p>Masuk dengan akun Anda untuk menggunakan layanan di bawah ini.</p></div><div class="public-grid">${services.map(([icon,title,text])=>`<article class="service-card"><span aria-hidden="true">${icon}</span><h3>${title}</h3><p>${text}</p></article>`).join('')}</div></section>
     <footer class="public-footer"><strong>Palima Indah Residence</strong><span>Curug · Kota Serang · Banten</span><button class="public-button secondary" data-public-login>Masuk Portal</button></footer>`;
-  let prayerReady = false, newsRevision = 0;
+  let prayerCleanup, prayerRevision = 0, newsRevision = 0;
   async function news() {
     const revision = ++newsRevision;
     const status = $('#publicNewsStatus'), list = $('#publicNews');
@@ -40,11 +40,16 @@
     $('#app').style.display = 'none'; $('#loginPage').style.display = 'none'; node.hidden = false;
     updateReturn();
     news();
-    if (!prayerReady) {
-      prayerReady = true;
-      if (window.mountPrayer) window.mountPrayer($('#publicPrayer'));
-      else $('#publicPrayer').innerHTML = `<p><a href="${official}" target="_blank" rel="noopener">Lihat jadwal resmi di Bimas Islam Kemenag</a></p>`;
-    }
+    prayerCleanup?.();
+    const revision = ++prayerRevision;
+    const box = $('#publicPrayer');
+    const link = `<a href="${official}" target="_blank" rel="noopener">Buka jadwal resmi Kemenag</a>`;
+    box.innerHTML = `<p role="status">Memuat lokasi jadwal salat… ${link}</p>`;
+    window.publicPrayerLocation().then(location => {
+      if (revision === prayerRevision && !node.hidden) prayerCleanup = window.mountPrayer(box, {location});
+    }).catch(() => {
+      if (revision === prayerRevision) box.innerHTML = `<p role="status">Lokasi jadwal belum dapat dimuat. ${link}</p>`;
+    });
   }
   const login = showLogin, app = showApp;
   showLogin = showPublic;

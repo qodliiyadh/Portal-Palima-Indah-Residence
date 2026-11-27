@@ -16,6 +16,30 @@
   --mint:#254034; --pink:#432e40; --blue:#283952; --gold:#433921;
   --halo:#322942; --hero:#302838; --shadow:0 7px 18px #0005,inset 0 1px 0 var(--highlight);
 }
+[data-theme=lagoon] {
+  --p:#175879; --p-dark:#12445f; --p-light:#236b87; --p-lighter:#b5dae6;
+  --p-bg:#e4f4f8; --bg:#f1f8fa; --card:#fcfeff; --text:#163448; --text2:#36556a; --text3:#476377; --border:#cadde5;
+  --accent:#805b1e; --sidebar:#dcebf8; --focus:#225995; --link:#175879;
+  --mint:#d8f0ed; --pink:#f5e4ed; --blue:#dbeaf9; --gold:#f5ebd4; --halo:#d2e7f7; --hero:#d9eff7;
+}
+[data-theme=sunset] {
+  --p:#963e37; --p-dark:#78302d; --p-light:#a1473a; --p-lighter:#f0c2b3;
+  --p-bg:#fff0e9; --bg:#fff6ef; --card:#fffcf8; --text:#482d2c; --text2:#624644; --text3:#745452; --border:#edcfc6;
+  --accent:#8a541e; --sidebar:#f7ddd5; --focus:#9f4252; --link:#903a36;
+  --mint:#e9efe0; --pink:#f8dfe0; --blue:#eae2f1; --gold:#f9e9cb; --halo:#f8d9ca; --hero:#fae2d5;
+}
+[data-theme=orchid] {
+  --p:#694199; --p-dark:#523178; --p-light:#7951a7; --p-lighter:#ddc7ee;
+  --p-bg:#f4e9fb; --bg:#f8f3fb; --card:#fffcff; --text:#342744; --text2:#544365; --text3:#644f72; --border:#e1d3eb;
+  --accent:#845526; --sidebar:#ede1fa; --focus:#774297; --link:#694199;
+  --mint:#e1f1e6; --pink:#f6e0ef; --blue:#e7e3fa; --gold:#f6ebd7; --halo:#eaddf6; --hero:#efdff6;
+}
+[data-theme=citrus] {
+  --p:#775013; --p-dark:#5f3e0a; --p-light:#855816; --p-lighter:#efd5a1;
+  --p-bg:#fff3d8; --bg:#fffaed; --card:#fffdf6; --text:#40321c; --text2:#58492d; --text3:#6d5937; --border:#e8d9b3;
+  --accent:#995119; --sidebar:#f6e8c1; --focus:#85520e; --link:#775013;
+  --mint:#e7efcc; --pink:#f8e4d8; --blue:#e4edf3; --gold:#fae9b5; --halo:#fae8b3; --hero:#f9ecc3;
+}
 body { background:radial-gradient(ellipse at 90% 0,var(--halo),transparent 44rem),var(--bg); }
 .sidebar { height:100vh; height:100dvh; background:var(--sidebar); box-shadow:var(--shadow); }
 .sidebar-brand { padding-block:22px; }
@@ -34,6 +58,7 @@ body { background:radial-gradient(ellipse at 90% 0,var(--halo),transparent 44rem
 [data-theme=dark] th { color:var(--link); }
 :where(button,a,input,select,textarea,[tabindex]):focus-visible { outline:3px solid var(--focus); outline-offset:3px; }
 
+.prayer-filters[hidden]{display:none!important}
 .public-page { --public-width:73rem; color:var(--text); line-height:1.6; }
 .public-nav,.public-hero,.public-section,.public-footer { width:min(var(--public-width,73rem),calc(100% - 2rem)); margin-inline:auto; }
 .public-nav { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.7rem 1.5rem; padding-block:1.15rem; }
@@ -77,6 +102,20 @@ img.hero-art,.hero-art img { display:block; width:100%; height:auto; }
 .prayer-item { display:grid; align-content:center; gap:.2rem; padding:.85rem .65rem; border:1px solid var(--border); border-radius:13px; background:var(--p-bg); text-align:center; }
 .prayer-item :is(strong,time) { color:var(--link); font-weight:800; font-variant-numeric:tabular-nums; }
 .prayer-status { margin-top:.65rem; color:var(--text2); font-size:.86rem; }
+.public-hero { position:relative; isolation:isolate; }
+.public-hero::before { content:""; position:absolute; z-index:-1; inset:0; border-radius:inherit; pointer-events:none; background:url('./porch-ornament.svg') left -40px bottom / 240px auto no-repeat; opacity:.12; }
+img.hero-art { border:4px solid var(--card); outline:1px solid var(--border); }
+.palima-home-ornament { display:flex; align-items:center; min-height:144px; margin-bottom:20px; padding:18px 38% 18px clamp(16px,4vw,30px); border:1px solid var(--border); border-radius:var(--radius); background:url('./porch-ornament.svg') right bottom / min(40%,360px) auto no-repeat,linear-gradient(110deg,var(--card),var(--hero)); box-shadow:var(--shadow); }
+.palima-home-ornament .eyebrow { margin-bottom:.2rem; }
+.palima-home-ornament strong { display:block; font-size:clamp(1.1rem,3vw,1.6rem); line-height:1.15; letter-spacing:-.035em; }
+.palima-home-ornament p { margin-top:.35rem; color:var(--text2); font-size:.86rem; }
+.palima-theme-card { margin-bottom:16px; }
+.palima-theme-picker { display:inline-flex; flex-wrap:wrap; align-items:center; gap:.5rem; color:var(--text2); font-size:.85rem; font-weight:700; }
+.palima-theme-picker select { min-height:44px; max-width:100%; padding:.4rem .65rem; border:1px solid var(--border); border-radius:10px; background:var(--card); color:var(--text); font:inherit; }
+.palima-theme-picker.is-compact { margin-inline-start:auto; }
+@media(max-width:540px) {
+  .palima-home-ornament { min-height:130px; padding-right:40%; background-position:right -32px bottom,center; background-size:auto 66%,cover; }
+}
 @media(max-width:700px) {
   .public-hero { grid-template-columns:1fr; }
   .hero-art { max-width:32rem; margin-inline:auto; }

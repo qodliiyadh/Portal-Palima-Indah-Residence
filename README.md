@@ -24,6 +24,8 @@ Salin **isi** folder ini, termasuk `.github/workflows/pages.yml`, ke root reposi
 
 Jalankan `supabase/03_public_announcements.sql` di SQL Editor. Di menu **Pengumuman**, centang **Tampilkan tanpa login** hanya untuk informasi yang aman dibaca siapa pun. Pengumuman lama tetap privat sampai ditandai publik.
 
+Jalankan juga `supabase/04_public_prayer_location.sql`. Admin dapat mengatur lokasi bersama dari **Pengaturan → Lokasi Jadwal Salat**. Landing page dan beranda dashboard menampilkan jadwal hari ini secara otomatis, tanpa filter bagi pengunjung. Tema dapat dipilih di landing page dan Pengaturan, dan disimpan di browser.
+
 Untuk menampilkan jadwal salat resmi di dalam portal, deploy fungsi `kemenag-prayer` sesuai [panduan jadwal salat](PRAYER.md). Lokasi awal adalah Banten → Kota Serang. Kecamatan Curug ditampilkan sebagai konteks lokasi; jadwal Kemenag tersedia pada tingkat kota/kabupaten. Tanpa fungsi tersebut, portal memberikan tautan resmi Kemenag dan tidak menampilkan jam perkiraan.
 
 ## Jadwal ronda

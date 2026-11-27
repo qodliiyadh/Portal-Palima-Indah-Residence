@@ -16,14 +16,17 @@
     /BALI|NUSA TENGGARA|KALIMANTAN (SELATAN|TIMUR|UTARA)|SULAWESI|GORONTALO/.test(name) ?
       ['Asia/Makassar', 'WITA'] : ['Asia/Jakarta', 'WIB'];
 
-  window.mountPrayer = container => {
+  window.mountPrayer = (container, { location = {}, onSave } = {}) => {
+    const preferredProvince = normalize(location.province || 'Banten');
+    const preferredCity = normalize(location.city || 'Kota Serang');
     mounts.get(container)?.();
     const panel = document.createElement('section');
     panel.className = 'prayer-panel';
     panel.innerHTML = `
-      <h2>Jadwal Sholat</h2>
-      <p>Kecamatan Curug, Kota Serang, Banten. Jadwal resmi tersedia pada tingkat kota/kabupaten, bukan kecamatan.</p>
-      <div class="prayer-filters"></div>
+      <h3>${onSave ? 'Lokasi Jadwal Salat' : 'Jadwal Salat Hari Ini'}</h3>
+      <p class="prayer-location"></p>
+      <div class="prayer-filters" ${onSave ? '' : 'hidden'}></div>
+      ${onSave ? '<button type="button" class="btn btn-p prayer-save" disabled>Simpan Lokasi Portal</button>' : ''}
       <p class="prayer-status" role="status"></p>
       <button type="button" hidden>Coba lagi</button>
       <div class="prayer-grid"></div>
@@ -32,7 +35,9 @@
     const filters = panel.querySelector('.prayer-filters');
     const status = panel.querySelector('.prayer-status');
     const grid = panel.querySelector('.prayer-grid');
-    const retry = panel.querySelector('button');
+    const retry = panel.querySelector('button[hidden]');
+    const save = panel.querySelector('.prayer-save');
+    panel.querySelector('.prayer-location').textContent = preferredProvince === 'BANTEN' && preferredCity === 'KOTA SERANG' ? 'Kecamatan Curug · Kota Serang · Banten (jadwal tingkat kota)' : `${preferredCity} · ${preferredProvince}`;
     const select = title => {
       const label = document.createElement('label');
       const input = document.createElement('select');
@@ -42,18 +47,13 @@
     };
     const province = select('Provinsi');
     const city = select('Kota/Kabupaten');
-    const month = select('Bulan');
-    const year = select('Tahun');
-    const date = select('Tanggal');
+    const date = document.createElement('select');
     function options(el, entries, selected) {
       el.replaceChildren(...entries.map(([value, label]) => new Option(label, value)));
       if (selected && entries.some(([value]) => value === selected)) el.value = selected;
       el.disabled = !entries.length;
     }
-    const yearMonth = localDate('Asia/Jakarta').split('-');
-    options(month, Array.from({ length: 12 }, (_, i) => [pad(i + 1),
-      new Intl.DateTimeFormat('id-ID', { month: 'long', timeZone: 'UTC' }).format(Date.UTC(2000, i, 1))]), yearMonth[1]);
-    options(year, Array.from({ length: 100 }, (_, i) => [String(2000 + i), String(2000 + i)]), yearMonth[0]);
+    filters.hidden = !onSave;
     options(province, []);
     options(city, []);
     options(date, []);
@@ -137,12 +137,18 @@
     }
 
     function loadSchedule() {
+      if (save) {
+        save.disabled = !city.value;
+        save.onclick = () => onSave({ province: province.selectedOptions[0].textContent, city: city.selectedOptions[0].textContent });
+      }
       clearSchedule();
       if (!city.value) return;
-      const prefix = `${year.value}-${month.value}-`;
+      const today = localDate(zoneFor(regionLabel(province))[0]);
+      const [year, month] = today.split('-');
+      const prefix = today.slice(0, 8);
       return load('Memuat jadwal resmi Kemenag…', 'Jadwal Kemenag gagal dimuat. Coba lagi atau buka situs resmi.', loadSchedule,
         async signal => {
-          const data = await request('jadwal', { prov: province.value, kabko: city.value, thn: year.value, bln: month.value }, signal);
+          const data = await request('jadwal', { prov: province.value, kabko: city.value, thn: year, bln: month }, signal);
           if (signal.aborted) return;
           days = data?.status === 1 && data.data ? Object.entries(data.data)
             .filter(([key, row]) => key.startsWith(prefix) && /^\d{4}-\d{2}-(0[1-9]|[12]\d|3[01])$/.test(key) && row && typeof row === 'object')
@@ -151,13 +157,14 @@
             status.textContent = 'Kemenag tidak menyediakan jadwal untuk pilihan ini.';
             return;
           }
-          const today = localDate(zoneFor(regionLabel(province))[0]);
+          if (!days.some(([key]) => key === today)) { status.textContent = 'Jadwal resmi untuk hari ini belum tersedia.'; return; }
           options(date, days.map(([key, row]) => [key, `${typeof row.tanggal === 'string' ? row.tanggal : key}${key === today ? ' (Hari ini)' : ''}`]), today);
           renderDate();
         });
     }
 
     function loadCities(preferred) {
+      if (save) save.disabled = true;
       options(city, []);
       clearSchedule();
       if (!province.value) return;
@@ -165,7 +172,9 @@
         async signal => {
           const rows = regions(await request('kabko', { prov: province.value }, signal));
           if (signal.aborted) return;
-          options(city, rows.map(x => [x.id, x.name]), rows.find(x => normalize(x.name) === preferred)?.id);
+          const match = rows.find(x => normalize(x.name) === preferred);
+          if (preferred && !match && !onSave) throw new Error('Unknown city');
+          options(city, rows.map(x => [x.id, x.name]), match?.id);
           if (!city.value) throw new Error('No cities');
           await loadSchedule();
         });
@@ -175,15 +184,16 @@
       return load('Memuat provinsi…', 'Daftar provinsi Kemenag gagal dimuat.', loadProvinces, async signal => {
         const rows = regions(await request('provinsi', {}, signal)).filter(x => normalize(x.name) !== 'PUSAT');
         if (signal.aborted) return;
-        options(province, rows.map(x => [x.id, x.name]), rows.find(x => normalize(x.name) === 'BANTEN')?.id);
+        const match = rows.find(x => normalize(x.name) === preferredProvince);
+        if (!match && !onSave) throw new Error('Unknown province');
+        options(province, rows.map(x => [x.id, x.name]), match?.id);
         if (!province.value) throw new Error('No provinces');
-        await loadCities('KOTA SERANG');
+        await loadCities(match ? preferredCity : undefined);
       });
     }
 
     province.onchange = () => loadCities(regionLabel(province) === 'BANTEN' ? 'KOTA SERANG' : undefined);
-    city.onchange = month.onchange = year.onchange = loadSchedule;
-    date.onchange = renderDate;
+    city.onchange = loadSchedule;
     if (endpoint) loadProvinces();
     else status.textContent = 'Layanan jadwal belum dikonfigurasi. Lihat jadwal di situs resmi Kemenag.';
     return cleanup;
