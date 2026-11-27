@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
+  <title id="title">Palima Indah Residence</title>
+  <rect x="3" y="3" width="90" height="90" rx="20" fill="#12463e"/>
+  <path d="M17 47 48 21l31 26" fill="none" stroke="#f3cb78" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M26 49v25h17V58h10v16h17V49L48 31Z" fill="#fff"/>
+  <path d="M19 81h58" fill="none" stroke="#f3cb78" stroke-width="3" stroke-linecap="round"/>
+</svg>

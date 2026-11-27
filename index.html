@@ -2,12 +2,13 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Portal Palima Indah Residence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <style>
@@ -203,6 +204,8 @@ tr:last-child td{border-bottom:none}
   .prayer-row{grid-template-columns:repeat(3,1fr)}
 }
 </style>
+<link rel="icon" href="logo.svg">
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -272,7 +275,7 @@ tr:last-child td{border-bottom:none}
         </div>
         <button class="btn btn-p" style="width:100%;justify-content:center;padding:13px" type="submit">Masuk</button>
       </form>
-      <div style="margin-top:18px;padding:14px;background:var(--p-bg);border-radius:12px;font-size:.74rem;color:var(--text2)">
+      <div style="margin-top:18px;padding:14px;background:var(--p-bg);border-radius:12px;font-size:.74rem;color:var(--text2)" id="demoHint">
         <strong>Demo — belum hubungkan Supabase?</strong><br>
         Ketik email & password apa saja untuk masuk sebagai <b>Warga</b>.<br>
         Gunakan email mengandung kata <b>admin</b> untuk masuk sebagai <b>Pengurus</b>.
@@ -294,17 +297,8 @@ tr:last-child td{border-bottom:none}
 /* ═══════════════════════════════════════
    CONFIG — ganti dengan nilai Supabase Anda
    ═══════════════════════════════════════ */
-const SUPABASE_URL  = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON = 'YOUR_ANON_KEY';
-
-let sb = null;        // Supabase client (null = demo mode)
-let DEMO = true;      // true = localStorage, false = Supabase
-
-try {
-  if (SUPABASE_URL.includes('YOUR_PROJECT')) throw 'no config';
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-  DEMO = false;
-} catch(e) { console.log('Demo mode — Supabase not configured') }
+let sb = null;
+let DEMO = true;
 
 /* ═══════════════════════════════════════
    STATE
@@ -338,22 +332,22 @@ const DDB = {
     const tables = ['profiles','bills','payments','complaints','letters','transactions','announcements','schedules','ronda','residents','logs'];
     tables.forEach(t => this[t] = this._get(t));
 
-    if(!this.profiles.length){
+    if(localStorage.getItem('pir_profiles')===null){
       this.profiles = [
         {id:'u1',email:'warga@demo.com',name:'Budi Santoso',role:'warga',address:'Blok A No. 15',phone:'6281234567890',ktp:'3201234567890001',verified:true,created_at:new Date().toISOString()},
-        {id:'u2',email:'admin@demo.com',name:'Ahmad Fauzi',role:'pengurus',address:'Blok B No. 3',phone:'6281298765432',ktp:'3201234567890002',verified:true,created_at:new Date().toISOString()},
+        {id:'u2',email:'admin@demo.com',name:'Ahmad Fauzi',role:'admin',address:'Blok B No. 3',phone:'6281298765432',ktp:'3201234567890002',verified:true,created_at:new Date().toISOString()},
         {id:'u3',email:'siti@demo.com',name:'Siti Nurhaliza',role:'warga',address:'Blok C No. 8',phone:'6281345678901',ktp:'3201234567890003',verified:true,created_at:new Date().toISOString()},
       ];
       this._set('profiles',this.profiles);
     }
-    if(!this.announcements.length){
+    if(localStorage.getItem('pir_announcements')===null){
       this.announcements=[
         {id:'a1',title:'Iuran Desember 2026',content:'Mohon segera lakukan pembayaran iuran bulan Desember sebelum tanggal 10. Terima kasih.', priority:'high',created_at:new Date().toISOString()},
         {id:'a2',title:'Kerja Bakti Minggu Depan',content:'Kerja bakti diadakan Minggu 30 Nov 2026 pukul 07.00 WIB di area taman blok A.', priority:'medium',created_at:new Date().toISOString()},
       ];
       this._set('announcements',this.announcements);
     }
-    if(!this.schedules.length){
+    if(localStorage.getItem('pir_schedules')===null){
       this.schedules=[
         {id:'s1',title:'Senam Pagi',day:'Minggu',time:'07:00',icon:'🤸',created_at:new Date().toISOString()},
         {id:'s2',title:'Pengajian Rutin',day:'Jumat',time:'19:30',icon:'📖',created_at:new Date().toISOString()},
@@ -361,7 +355,7 @@ const DDB = {
       ];
       this._set('schedules',this.schedules);
     }
-    if(!this.ronda.length){
+    if(localStorage.getItem('pir_ronda')===null){
       this.ronda=[
         {id:'r1',group:'Kelompok A',members:'Budi, Joko, Dedi',day:'Senin & Kamis',time:'22:00 – 05:00',created_at:new Date().toISOString()},
         {id:'r2',group:'Kelompok B',members:'Ahmad, Rian, Hadi',day:'Selasa & Jumat',time:'22:00 – 05:00',created_at:new Date().toISOString()},
@@ -369,7 +363,7 @@ const DDB = {
       ];
       this._set('ronda',this.ronda);
     }
-    if(!this.bills.length){
+    if(localStorage.getItem('pir_bills')===null){
       const months=['Oktober 2026','November 2026','Desember 2026'];
       months.forEach((m,i)=>{
         this.bills.push({id:'b'+(i+1),user_id:'u1',month:m,items:[{name:'Iuran Keamanan',amount:100000},{name:'Iuran Kebersihan',amount:50000},{name:'Iuran Listrik Jalan',amount:25000}],total:175000,status:i===0?'verified':i===1?'paid':'pending',created_at:new Date().toISOString()});
@@ -377,7 +371,7 @@ const DDB = {
       });
       this._set('bills',this.bills);
     }
-    if(!this.transactions.length){
+    if(localStorage.getItem('pir_transactions')===null){
       this.transactions=[
         {id:'t1',type:'income',title:'Iuran Warga Oktober',amount:5250000,date:'2026-10-15',created_at:new Date().toISOString()},
         {id:'t2',type:'expense',title:'Gaji Satpam',amount:2000000,date:'2026-10-20',created_at:new Date().toISOString()},
@@ -387,7 +381,7 @@ const DDB = {
       ];
       this._set('transactions',this.transactions);
     }
-    if(!this.residents.length){
+    if(localStorage.getItem('pir_residents')===null){
       this.residents = this.profiles.map(p=>({...p}));
       this._set('residents',this.residents);
     }
@@ -419,21 +413,9 @@ function waLink(phone,text){
   return `https://api.whatsapp.com/send?phone=${p}&text=${encodeURIComponent(text)}`;
 }
 
-function waOpen(phone,text){ window.open(waLink(phone,text),'_blank') }
+function waOpen(phone,text){ window.open(waLink(phone,text),'_blank','noopener,noreferrer') }
 
-function waSend(phone,text){
-  // If WA Business API is configured, send via API; otherwise fall back to link
-  const apiKey = S.settings.wa_api_key;
-  const apiUrl = S.settings.wa_api_url;
-  if(apiKey && apiUrl){
-    fetch(apiUrl,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-      body:JSON.stringify({messaging_product:'whatsapp',to:phone.replace(/\D/g,''),type:'text',text:{body:text}})
-    }).then(r=>{if(r.ok)toast('Pesan WhatsApp terkirim');else toast('Gagal kirim WA, buka manual','error')})
-      .catch(()=>waOpen(phone,text));
-  } else {
-    waOpen(phone,text);
-  }
-}
+function waSend(phone,text){ waOpen(phone,text) }
 
 /* ── Prayer times (simple calculation) ── */
 function prayerTimes(){
@@ -543,7 +525,7 @@ function addLog(action,detail){
    NAV CONFIG
    ═══════════════════════════════════════ */
 function getNavItems(){
-  const isAdmin=S.profile?.role==='pengurus';
+  const isAdmin=isStaff();
   const common=[
     {id:'home',icon:'🏠',label:'Beranda',group:'Menu'},
     {id:'announcements',icon:'📢',label:'Pengumuman',group:'Menu'},
@@ -562,6 +544,7 @@ function getNavItems(){
     {id:'schedules',icon:'📅',label:'Jadwal Kegiatan',group:'Pengurus'},
     {id:'ronda',icon:'🛡️',label:'Jadwal Ronda',group:'Pengurus'},
     {id:'cctv',icon:'📹',label:'CCTV',group:'Pengurus'},
+    {id:'users-manage',icon:'👥',label:'Pengguna',group:'Pengurus'},
     {id:'settings',icon:'⚙️',label:'Pengaturan',group:'Pengurus'},
   ];
   return [...common,...(isAdmin?admin:warga)];
@@ -572,7 +555,7 @@ function renderNav(){
   let html='';let lastG='';
   items.forEach(i=>{
     if(i.group!==lastG){html+=`<div class="nav-group-label">${i.group}</div>`;lastG=i.group}
-    html+=`<div class="nav-item ${S.page===i.id?'active':''}" onclick="nav('${i.id}')">
+    html+=`<div class="nav-item ${S.page===i.id?'active':''}" onclick="nav(${jsArg(i.id)})">
       <span class="ni">${i.icon}</span>${i.label}${i.badge?`<span class="nav-badge">${i.badge}</span>`:''}
     </div>`;
   });
@@ -581,13 +564,13 @@ function renderNav(){
   // Bottom nav (mobile) — max 5 items
   const bot=items.slice(0,5);
   $('#bottomNav').innerHTML=bot.map(i=>`
-    <button class="bnav ${S.page===i.id?'active':''}" onclick="nav('${i.id}')">
+    <button class="bnav ${S.page===i.id?'active':''}" onclick="nav(${jsArg(i.id)})">
       <span class="bi">${i.icon}</span>${i.label}
     </button>
   `).join('');
 }
 
-function nav(page){S.page=page;renderNav();renderPage();closeSidebar();$('#pageTitle').textContent=getNavItems().find(i=>i.id===page)?.label||'Portal'}
+function nav(page){if(!getNavItems().some(i=>i.id===page))page='home';S.page=page;renderNav();renderPage();closeSidebar();$('#pageTitle').textContent=getNavItems().find(i=>i.id===page)?.label||'Portal'}
 
 /* ═══════════════════════════════════════
    SIDEBAR TOGGLE
@@ -613,6 +596,7 @@ function closeModal(){$('#modal').classList.remove('show')}
 function renderPage(){
   const p=S.page;const c=$('#pageContent');
   const pages={
+    'users-manage':pgUsersManage,
     'home':pgHome,'announcements':pgAnnouncements,
     'my-bills':pgMyBills,'my-complaints':pgMyComplaints,'my-letters':pgMyLetters,
     'residents':pgResidents,'bills-manage':pgBillsManage,'complaints-manage':pgComplaintsManage,
@@ -626,7 +610,7 @@ function renderPage(){
 /* ── HOME ── */
 function pgHome(){
   const pt=prayerTimes();
-  const isAdmin=S.profile?.role==='pengurus';
+  const isAdmin=isStaff();
   const totalIncome=DDB.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const totalExpense=DDB.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   const myBills=DDB.bills.filter(b=>b.user_id===S.profile?.id);
@@ -634,7 +618,7 @@ function pgHome(){
 
   return `
     <div style="margin-bottom:20px">
-      <h2 style="font-size:1.3rem;margin-bottom:4px">Halo, ${S.profile?.name?.split(' ')[0]} 👋</h2>
+      <h2 style="font-size:1.3rem;margin-bottom:4px">Halo, ${esc(S.profile?.name?.split(' ')[0])} 👋</h2>
       <p style="color:var(--text3);font-size:.85rem">${fd(new Date())} — ${new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})} WIB</p>
     </div>
 
@@ -686,8 +670,8 @@ function pgHome(){
       <div class="card-body">
         ${DDB.announcements.slice(0,3).map(a=>`
           <div style="padding:12px;background:var(--p-bg);border-radius:10px;margin-bottom:10px;border-left:4px solid ${a.priority==='high'?'var(--danger)':'var(--p)'}">
-            <div style="font-weight:700;font-size:.85rem;margin-bottom:4px">${a.title}</div>
-            <div style="font-size:.78rem;color:var(--text2)">${a.content}</div>
+            <div style="font-weight:700;font-size:.85rem;margin-bottom:4px">${esc(a.title)}</div>
+            <div style="font-size:.78rem;color:var(--text2)">${esc(a.content)}</div>
             <div style="font-size:.65rem;color:var(--text3);margin-top:6px">${fdt(a.created_at)}</div>
           </div>
         `).join('')}
@@ -698,7 +682,7 @@ function pgHome(){
 
 /* ── ANNOUNCEMENTS ── */
 function pgAnnouncements(){
-  const isAdmin=S.profile?.role==='pengurus';
+  const isAdmin=isStaff();
   return `
     ${isAdmin?`<div class="btn-group" style="margin-bottom:16px">
       <button class="btn btn-p" onclick="modalAddAnnouncement()">+ Tambah Pengumuman</button>
@@ -708,14 +692,14 @@ function pgAnnouncements(){
       <div class="card" style="margin-bottom:12px">
         <div class="card-body">
           <div style="display:flex;justify-content:space-between;align-items:start;gap:8px;margin-bottom:8px">
-            <div style="font-weight:700;font-size:.92rem">${a.title}</div>
+            <div style="font-weight:700;font-size:.92rem">${esc(a.title)}</div>
             <span class="badge-s ${a.priority==='high'?'badge-red':'badge-green'}">${a.priority==='high'?'Penting':'Info'}</span>
           </div>
-          <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${a.content}</p>
+          <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${esc(a.content)}</p>
           <div style="font-size:.68rem;color:var(--text3)">${fdt(a.created_at)}</div>
           ${isAdmin?`<div style="margin-top:10px;display:flex;gap:6px">
-            <button class="btn btn-d btn-sm" onclick="deleteAnnouncement('${a.id}')">Hapus</button>
-            <button class="btn btn-wa btn-sm" onclick="broadcastWA('${a.title}','${a.content.replace(/'/g,"\\'")}')">📲 Broadcast WA</button>
+            ${manageActions('announcements',a,'announcements')}
+            <button class="btn btn-wa btn-sm" onclick="broadcastAnnouncement(${jsArg(a.id)})">📲 Broadcast WA</button>
           </div>`:''}
         </div>
       </div>
@@ -756,17 +740,17 @@ function pgMyBills(){
       <div class="card" style="margin-bottom:14px">
         <div class="card-body">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-            <span style="font-weight:700;font-size:.95rem">${b.month}</span>
+            <span style="font-weight:700;font-size:.95rem">${esc(b.month)}</span>
             <span class="badge-s ${b.status==='verified'?'badge-blue':b.status==='paid'?'badge-green':'badge-amber'}">
               ${b.status==='verified'?'✓ Terverifikasi':b.status==='paid'?'⏳ Menunggu Verifikasi':'Belum Bayar'}
             </span>
           </div>
-          ${b.items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px"><span style="color:var(--text2)">${i.name}</span><span style="font-weight:600">${rp(i.amount)}</span></div>`).join('')}
+          ${b.items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px"><span style="color:var(--text2)">${esc(i.name)}</span><span style="font-weight:600">${rp(i.amount)}</span></div>`).join('')}
           <div style="margin-top:12px;padding-top:12px;border-top:2px dashed var(--border);display:flex;justify-content:space-between;align-items:center">
             <span style="font-weight:600;font-size:.85rem">Total</span>
             <span style="font-size:1.1rem;font-weight:800;color:var(--p)">${rp(b.total)}</span>
           </div>
-          ${b.status==='pending'?`<button class="btn btn-p" style="width:100%;justify-content:center;margin-top:14px" onclick="modalPayBill('${b.id}')">Bayar Sekarang</button>`:''}
+          ${b.status==='pending'?`<button class="btn btn-p" style="width:100%;justify-content:center;margin-top:14px" onclick="modalPayBill(${jsArg(b.id)})">Bayar Sekarang</button>`:''}
         </div>
       </div>
     `).join('')}
@@ -790,7 +774,7 @@ function modalPayBill(id){
       </div>
     </div>
     <div class="fg"><label>Catatan (opsional)</label><textarea id="mPayNote" rows="2"></textarea></div>
-  `,`<button class="btn btn-p" onclick="submitPayBill('${id}')">Kirim Bukti</button>`);
+  `,`<button class="btn btn-p" onclick="submitPayBill(${jsArg(id)})">Kirim Bukti</button>`);
 }
 
 async function submitPayBill(id){
@@ -800,7 +784,7 @@ async function submitPayBill(id){
   DDB.update('bills',id,{status:'paid',proof,paid_at:new Date().toISOString(),note:$('#mPayNote').value});
   addLog('Iuran','Bukti dikirim untuk '+id);
   // Notify admin via WA
-  const adminProfiles=DDB.profiles.filter(p=>p.role==='pengurus');
+  const adminProfiles=DDB.profiles.filter(p=>['admin','pengurus'].includes(p.role));
   adminProfiles.forEach(a=>{if(a.phone)waSend(a.phone,`💰 *Pembayaran Iuran Baru*\nDari: ${S.profile.name}\nBulan: ${DDB.bills.find(b=>b.id===id)?.month}\n\nSilakan verifikasi di portal.`)});
   closeModal();nav('my-bills');toast('Bukti transfer dikirim!');
 }
@@ -821,15 +805,16 @@ function pgMyComplaints(){
     ${list.map(c=>`
       <div class="card" style="margin-bottom:12px"><div class="card-body">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-weight:700;font-size:.88rem">${c.title}</span>
+          <span style="font-weight:700;font-size:.88rem">${esc(c.title)}</span>
           <span class="badge-s ${c.status==='resolved'?'badge-blue':c.status==='inprogress'?'badge-green':'badge-amber'}">
             ${c.status==='resolved'?'✓ Selesai':c.status==='inprogress'?'Diproses':'Menunggu'}
           </span>
         </div>
-        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${c.description}</p>
-        ${c.image?`<img src="${c.image}" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:8px" alt="Foto">`:''}
+        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${esc(c.description)}</p>
+          ${manageActions('complaints',c,'my-complaints')}
+        ${c.image?`<img src="${imageSrc(c.image)}" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:8px" alt="Foto">`:''}
         <div style="font-size:.68rem;color:var(--text3)">${fdt(c.created_at)}</div>
-        ${c.response?`<div style="margin-top:10px;padding:12px;background:var(--p-bg);border-radius:10px;font-size:.8rem"><strong>Tanggapan RT:</strong><br>${c.response}</div>`:''}
+        ${c.response?`<div style="margin-top:10px;padding:12px;background:var(--p-bg);border-radius:10px;font-size:.8rem"><strong>Tanggapan RT:</strong><br>${esc(c.response)}</div>`:''}
       </div></div>
     `).join('')}
   `;
@@ -857,7 +842,7 @@ async function saveComplaint(){
   let img=null;const f=$('#mCpFile');if(f.files[0])img=await toBase64(f.files[0]);
   DDB.add('complaints',{user_id:S.profile.id,user_name:S.profile.name,phone:S.profile.phone,title:t,description:d,image:img,status:'pending'});
   addLog('Pengaduan','Baru: '+t);
-  const admins=DDB.profiles.filter(p=>p.role==='pengurus');
+  const admins=DDB.profiles.filter(p=>['admin','pengurus'].includes(p.role));
   admins.forEach(a=>{if(a.phone)waSend(a.phone,`📝 *Pengaduan Baru*\nDari: ${S.profile.name}\nJudul: ${t}\n\n${d}`)});
   closeModal();nav('my-complaints');toast('Pengaduan dikirim!');
 }
@@ -871,12 +856,13 @@ function pgMyLetters(){
     ${list.map(l=>`
       <div class="card" style="margin-bottom:12px"><div class="card-body">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-weight:700;font-size:.88rem">${l.type}</span>
+          <span style="font-weight:700;font-size:.88rem">${esc(l.type)}</span>
           <span class="badge-s ${l.status==='approved'?'badge-blue':l.status==='inreview'?'badge-green':'badge-amber'}">
             ${l.status==='approved'?'✓ Disetujui':l.status==='inreview'?'Ditinjau':'Menunggu'}
           </span>
         </div>
-        <p style="font-size:.82rem;color:var(--text2)"><strong>Keperluan:</strong> ${l.purpose}</p>
+        <p style="font-size:.82rem;color:var(--text2)"><strong>Keperluan:</strong> ${esc(l.purpose)}</p>
+          ${manageActions('letters',l,'my-letters')}${l.status==='approved'?`<button class="btn btn-o btn-sm" data-print-letter="${esc(l.id)}">Cetak Surat</button>`:''}
         <div style="font-size:.68rem;color:var(--text3);margin-top:6px">${fdt(l.created_at)}</div>
       </div></div>
     `).join('')}
@@ -905,7 +891,7 @@ async function saveLetter(){
   if(!type||!purpose)return toast('Jenis surat dan keperluan wajib diisi','error');
   DDB.add('letters',{user_id:S.profile.id,user_name:S.profile.name,phone:S.profile.phone,type,purpose,status:'pending'});
   addLog('Surat','Pengajuan: '+type);
-  const admins=DDB.profiles.filter(p=>p.role==='pengurus');
+  const admins=DDB.profiles.filter(p=>['admin','pengurus'].includes(p.role));
   admins.forEach(a=>{if(a.phone)waSend(a.phone,`📄 *Pengajuan Surat Baru*\nDari: ${S.profile.name}\nJenis: ${type}\nKeperluan: ${purpose}`)});
   closeModal();nav('my-letters');toast('Surat diajukan!');
 }
@@ -936,13 +922,13 @@ function pgResidents(){
 
 function residentRow(r){
   return `<tr>
-    <td style="font-weight:600">${r.name}</td><td>${r.address}</td>
-    <td>${r.phone||'-'} ${r.phone?`<button class="btn btn-wa btn-sm" style="padding:3px 8px;font-size:.65rem;margin-left:4px" onclick="waOpen('${r.phone}','Halo ${r.name}, ')">💬</button>`:''}</td>
-    <td style="font-size:.75rem">${r.ktp||'-'}</td>
+    <td style="font-weight:600">${esc(r.name)}</td><td>${esc(r.address)}</td>
+    <td>${esc(r.phone||'-')} ${r.phone?`<button class="btn btn-wa btn-sm" style="padding:3px 8px;font-size:.65rem;margin-left:4px" onclick="waOpen(${jsArg(r.phone)},${jsArg(`Halo ${r.name}, `)})">💬</button>`:''}</td>
+    <td style="font-size:.75rem">${esc(r.ktp||'-')}</td>
     <td><span class="badge-s ${r.verified?'badge-green':'badge-amber'}">${r.verified?'Terverifikasi':'Belum'}</span></td>
     <td><div style="display:flex;gap:4px">
-      ${!r.verified?`<button class="btn btn-p btn-sm" onclick="verifyResident('${r.id}')">✓</button>`:''}
-      <button class="btn btn-d btn-sm" onclick="deleteResident('${r.id}')">🗑</button>
+      ${!r.verified?`<button class="btn btn-p btn-sm" onclick="verifyResident(${jsArg(r.id)})">✓</button>`:''}
+      ${manageActions('residents',r,'residents')}
     </div></td>
   </tr>`;
 }
@@ -993,12 +979,13 @@ function pgBillsManage(){
         <tbody>${DDB.bills.map(b=>{
           const u=DDB.profiles.find(p=>p.id===b.user_id);
           return `<tr>
-            <td style="font-weight:600">${u?.name||'-'}</td><td>${b.month}</td><td>${rp(b.total)}</td>
+            <td style="font-weight:600">${esc(u?.name||'-')}</td><td>${esc(b.month)}</td><td>${rp(b.total)}</td>
             <td><span class="badge-s ${b.status==='verified'?'badge-blue':b.status==='paid'?'badge-green':'badge-amber'}">${b.status==='verified'?'Verified':b.status==='paid'?'Bayar':'Belum'}</span></td>
             <td><div style="display:flex;gap:4px;flex-wrap:wrap">
-              ${b.status==='paid'?`<button class="btn btn-p btn-sm" onclick="verifyBill('${b.id}')">✓ Verifikasi</button>`:''}
-              ${b.proof?`<button class="btn btn-o btn-sm" onclick="viewProof('${b.id}')">👁 Bukti</button>`:''}
-              ${u?.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen('${u.phone}','Halo ${u?.name}, mengenai iuran bulan ${b.month}: ')">💬</button>`:''}
+              ${b.status==='paid'?`<button class="btn btn-p btn-sm" onclick="verifyBill(${jsArg(b.id)})">✓ Verifikasi</button>`:''}
+          ${manageActions('bills',b,'bills-manage')}
+              ${b.proof?`<button class="btn btn-o btn-sm" onclick="viewProof(${jsArg(b.id)})">👁 Bukti</button>`:''}
+              ${u?.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen(${jsArg(u.phone)},${jsArg(`Halo ${u?.name}, mengenai iuran bulan ${b.month}: `)})">💬</button>`:''}
             </div></td>
           </tr>`;
         }).join('')}</tbody>
@@ -1011,7 +998,7 @@ function modalCreateBill(){
   const wargas=DDB.profiles.filter(p=>p.role==='warga');
   openModal('Buat Tagihan Baru',`
     <div class="form-grid">
-      <div class="fg"><label>Warga *</label><select id="mBUser"><option value="all">Semua Warga</option>${wargas.map(w=>`<option value="${w.id}">${w.name}</option>`).join('')}</select></div>
+      <div class="fg"><label>Warga *</label><select id="mBUser"><option value="all">Semua Warga</option>${wargas.map(w=>`<option value="${esc(w.id)}">${esc(w.name)}</option>`).join('')}</select></div>
       <div class="fg"><label>Bulan *</label><input id="mBMonth" placeholder="Desember 2026"></div>
     </div>
     <div style="margin-top:12px"><label style="font-size:.78rem;font-weight:600">Item Tagihan</label>
@@ -1047,7 +1034,7 @@ function verifyBill(id){
   addLog('Iuran','Diverifikasi: '+id);nav('bills-manage');toast('Pembayaran diverifikasi');
 }
 
-function viewProof(id){const b=DDB.bills.find(x=>x.id===id);if(b?.proof)openModal('Bukti Transfer',`<img src="${b.proof}" style="width:100%;border-radius:10px" alt="Bukti">`)}
+function viewProof(id){const b=DDB.bills.find(x=>x.id===id);if(b?.proof)openModal('Bukti Transfer',`<img src="${imageSrc(b.proof)}" style="width:100%;border-radius:10px" alt="Bukti">`)}
 
 function exportAllBillsPDF(){
   const cols=['Warga','Bulan','Total','Status'];
@@ -1065,21 +1052,22 @@ function pgComplaintsManage(){
     ${DDB.complaints.map(c=>`
       <div class="card" style="margin-bottom:12px"><div class="card-body">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
-          <span style="font-weight:700">${c.title}</span>
+          <span style="font-weight:700">${esc(c.title)}</span>
           <span class="badge-s ${c.status==='resolved'?'badge-blue':c.status==='inprogress'?'badge-green':'badge-amber'}">
             ${c.status==='resolved'?'Selesai':c.status==='inprogress'?'Diproses':'Menunggu'}
           </span>
         </div>
-        <p style="font-size:.78rem;color:var(--text3);margin-bottom:6px">Oleh: ${c.user_name||'-'} • ${fdt(c.created_at)}</p>
-        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${c.description}</p>
-        ${c.image?`<img src="${c.image}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:8px" alt="Foto">`:''}
-        ${c.response?`<div style="padding:10px;background:var(--p-bg);border-radius:8px;font-size:.8rem;margin-bottom:8px"><strong>Tanggapan:</strong> ${c.response}</div>`:''}
+        <p style="font-size:.78rem;color:var(--text3);margin-bottom:6px">Oleh: ${esc(c.user_name||'-')} • ${fdt(c.created_at)}</p>
+        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${esc(c.description)}</p>
+        ${c.image?`<img src="${imageSrc(c.image)}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:8px" alt="Foto">`:''}
+        ${c.response?`<div style="padding:10px;background:var(--p-bg);border-radius:8px;font-size:.8rem;margin-bottom:8px"><strong>Tanggapan:</strong> ${esc(c.response)}</div>`:''}
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           ${c.status!=='resolved'?`
-            <button class="btn btn-o btn-sm" onclick="respondComplaint('${c.id}')">💬 Tanggapi</button>
-            <button class="btn btn-p btn-sm" onclick="resolveComplaint('${c.id}')">✓ Selesai</button>
+          ${manageActions('complaints',c,'complaints-manage')}
+            <button class="btn btn-o btn-sm" onclick="respondComplaint(${jsArg(c.id)})">💬 Tanggapi</button>
+            <button class="btn btn-p btn-sm" onclick="resolveComplaint(${jsArg(c.id)})">✓ Selesai</button>
           `:''}
-          ${c.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen('${c.phone}','Halo ${c.user_name||''}, mengenai pengaduan: ${c.title}. ')">📲 WA</button>`:''}
+          ${c.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen(${jsArg(c.phone)},${jsArg(`Halo ${c.user_name||''}, mengenai pengaduan: ${c.title}. `)})">📲 WA</button>`:''}
         </div>
       </div></div>
     `).join('')}
@@ -1088,7 +1076,7 @@ function pgComplaintsManage(){
 
 function respondComplaint(id){
   openModal('Tanggapi Pengaduan',`<div class="fg"><label>Tanggapan</label><textarea id="mCpResp" placeholder="Tulis tanggapan..."></textarea></div>`,
-  `<button class="btn btn-p" onclick="saveResponse('${id}')">Kirim</button>`);
+  `<button class="btn btn-p" onclick="saveResponse(${jsArg(id)})">Kirim</button>`);
 }
 function saveResponse(id){
   const resp=$('#mCpResp').value;if(!resp)return toast('Tulis tanggapan','error');
@@ -1119,17 +1107,18 @@ function pgLettersManage(){
     ${DDB.letters.map(l=>`
       <div class="card" style="margin-bottom:12px"><div class="card-body">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
-          <span style="font-weight:700">${l.type}</span>
+          <span style="font-weight:700">${esc(l.type)}</span>
           <span class="badge-s ${l.status==='approved'?'badge-blue':l.status==='inreview'?'badge-green':'badge-amber'}">
             ${l.status==='approved'?'Disetujui':l.status==='inreview'?'Ditinjau':'Menunggu'}
           </span>
         </div>
-        <p style="font-size:.78rem;color:var(--text3)">Pemohon: ${l.user_name||'-'} • ${fdt(l.created_at)}</p>
-        <p style="font-size:.82rem;color:var(--text2);margin-top:4px"><strong>Keperluan:</strong> ${l.purpose}</p>
+        <p style="font-size:.78rem;color:var(--text3)">Pemohon: ${esc(l.user_name||'-')} • ${fdt(l.created_at)}</p>
+        <p style="font-size:.82rem;color:var(--text2);margin-top:4px"><strong>Keperluan:</strong> ${esc(l.purpose)}</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
-          ${l.status==='pending'?`<button class="btn btn-o btn-sm" onclick="reviewLetter('${l.id}')">👁 Tinjau</button>`:''}
-          ${l.status!=='approved'?`<button class="btn btn-p btn-sm" onclick="approveLetter('${l.id}')">✓ Setujui</button>`:''}
-          ${l.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen('${l.phone}','Halo ${l.user_name||''}, mengenai pengajuan surat ${l.type}: ')">📲 WA</button>`:''}
+          ${manageActions('letters',l,'letters-manage')}${l.status==='approved'?`<button class="btn btn-o btn-sm" data-print-letter="${esc(l.id)}">Cetak Surat</button>`:''}
+          ${l.status==='pending'?`<button class="btn btn-o btn-sm" onclick="reviewLetter(${jsArg(l.id)})">👁 Tinjau</button>`:''}
+          ${l.status!=='approved'?`<button class="btn btn-p btn-sm" onclick="approveLetter(${jsArg(l.id)})">✓ Setujui</button>`:''}
+          ${l.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen(${jsArg(l.phone)},${jsArg(`Halo ${l.user_name||''}, mengenai pengajuan surat ${l.type}: `)})">📲 WA</button>`:''}
         </div>
       </div></div>
     `).join('')}
@@ -1171,10 +1160,10 @@ function pgCashbook(){
         <tbody>${DDB.transactions.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=>`
           <tr>
             <td style="font-size:.78rem">${fd(t.date)}</td>
-            <td style="font-weight:600">${t.title}</td>
+            <td style="font-weight:600">${esc(t.title)}</td>
             <td><span class="badge-s ${t.type==='income'?'badge-green':'badge-red'}">${t.type==='income'?'Masuk':'Keluar'}</span></td>
             <td style="font-weight:700;color:${t.type==='income'?'var(--p)':'var(--danger)'}">${t.type==='income'?'+':'-'}${rp(t.amount)}</td>
-            <td><button class="btn btn-d btn-sm" onclick="deleteTransaction('${t.id}')">🗑</button></td>
+            <td>${manageActions('transactions',t,'cashbook')}</td>
           </tr>
         `).join('')}</tbody>
       </table>
@@ -1219,8 +1208,8 @@ function pgSchedules(){
       <table>
         <thead><tr><th></th><th>Kegiatan</th><th>Hari</th><th>Waktu</th><th>Aksi</th></tr></thead>
         <tbody>${DDB.schedules.map(s=>`
-          <tr><td style="font-size:1.3rem">${s.icon||'📅'}</td><td style="font-weight:600">${s.title}</td><td>${s.day}</td><td>${s.time}</td>
-          <td><button class="btn btn-d btn-sm" onclick="deleteSchedule('${s.id}')">🗑</button></td></tr>
+          <tr><td style="font-size:1.3rem">${esc(s.icon||'📅')}</td><td style="font-weight:600">${esc(s.title)}</td><td>${esc(s.day)}</td><td>${esc(s.time)}</td>
+          <td>${manageActions('schedules',s,'schedules')}</td></tr>
         `).join('')}</tbody>
       </table>
     </div></div></div>
@@ -1259,7 +1248,7 @@ function pgRonda(){
       <div class="card" style="margin-bottom:12px"><div class="card-body">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <span style="font-weight:700;font-size:.92rem">🛡️ ${r.group}</span>
-          <button class="btn btn-d btn-sm" onclick="deleteRonda('${r.id}')">🗑</button>
+          <button class="btn btn-d btn-sm" onclick="deleteRonda(${jsArg(r.id)})">🗑</button>
         </div>
         <p style="font-size:.82rem;color:var(--text2)"><strong>Anggota:</strong> ${r.members}</p>
         <p style="font-size:.82rem;color:var(--text2)"><strong>Jadwal:</strong> ${r.day} • ${r.time}</p>
@@ -1296,8 +1285,8 @@ function pgCCTV(){
       <h3 style="margin-bottom:8px">Dashboard CCTV</h3>
       <p style="color:var(--text3);font-size:.85rem;margin-bottom:20px">Buka dashboard CCTV yang terhubung ke sistem keamanan lingkungan.</p>
       ${url?`
-        <button class="btn btn-p" onclick="window.open('${url}','_blank')" style="margin-bottom:12px">🔗 Buka Dashboard CCTV</button>
-        <p style="font-size:.72rem;color:var(--text3)">URL: ${url}</p>
+        <button class="btn btn-p" onclick="openCctv()" style="margin-bottom:12px">🔗 Buka Dashboard CCTV</button>
+        <p style="font-size:.72rem;color:var(--text3)">URL: ${esc(url)}</p>
       `:`
         <div style="padding:16px;background:var(--p-bg);border-radius:12px;font-size:.82rem;color:var(--text2)">
           Belum ada URL CCTV. Atur di menu <strong>Pengaturan → CCTV URL</strong>.
@@ -1315,9 +1304,9 @@ function pgSettings(){
       <div class="card-header"><h3>🏠 Identitas Perumahan</h3></div>
       <div class="card-body">
         <div class="form-grid">
-          <div class="fg"><label>Nama Perumahan</label><input id="sName" value="${s.name||'Palima Indah Residence'}" onchange="saveSetting('name',this.value)"></div>
-          <div class="fg"><label>Alamat</label><input id="sAddr" value="${s.address||''}" placeholder="Jl. ..." onchange="saveSetting('address',this.value)"></div>
-          <div class="fg"><label>No. WA RT</label><input id="sPhone" value="${s.phone||''}" placeholder="6281..." onchange="saveSetting('phone',this.value)"></div>
+          <div class="fg"><label>Nama Perumahan</label><input id="sName" value="${esc(s.name||'Palima Indah Residence')}" onchange="saveSetting('name',this.value)"></div>
+          <div class="fg"><label>Alamat</label><input id="sAddr" value="${esc(s.address||'')}" placeholder="Jl. ..." onchange="saveSetting('address',this.value)"></div>
+          <div class="fg"><label>No. WA RT</label><input id="sPhone" value="${esc(s.phone||'')}" placeholder="6281..." onchange="saveSetting('phone',this.value)"></div>
         </div>
       </div>
     </div>
@@ -1333,33 +1322,15 @@ function pgSettings(){
     </div>
 
     <div class="card" style="margin-bottom:16px">
-      <div class="card-header"><h3>📲 WhatsApp</h3></div>
-      <div class="card-body">
-        <div class="form-grid">
-          <div class="fg"><label>WA Business API URL</label><input value="${s.wa_api_url||''}" placeholder="https://graph.facebook.com/v18.0/..." onchange="saveSetting('wa_api_url',this.value)"></div>
-          <div class="fg"><label>API Token</label><input type="password" value="${s.wa_api_key||''}" placeholder="Bearer token" onchange="saveSetting('wa_api_key',this.value)"></div>
-        </div>
-        <p style="font-size:.72rem;color:var(--text3);margin-top:10px">Jika tidak diisi, WhatsApp akan dibuka secara manual (wa.me link). Jika diisi, pesan terkirim otomatis via API.</p>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px">
       <div class="card-header"><h3>📹 CCTV</h3></div>
       <div class="card-body">
-        <div class="fg"><label>URL Dashboard CCTV</label><input value="${s.cctv_url||''}" placeholder="https://cctv.example.com" onchange="saveSetting('cctv_url',this.value)"></div>
+        <div class="fg"><label>URL Dashboard CCTV</label><input value="${esc(s.cctv_url||'')}" placeholder="https://cctv.example.com" onchange="saveSetting('cctv_url',this.value)"></div>
       </div>
     </div>
 
     <div class="card" style="margin-bottom:16px">
-      <div class="card-header"><h3>🔗 Supabase</h3></div>
-      <div class="card-body">
-        <div class="form-grid">
-          <div class="fg"><label>Project URL</label><input value="${s.sb_url||SUPABASE_URL}" placeholder="https://xxx.supabase.co" onchange="saveSetting('sb_url',this.value)"></div>
-          <div class="fg"><label>Anon Key</label><input type="password" value="${s.sb_key||''}" placeholder="eyJhbGciOi..." onchange="saveSetting('sb_key',this.value)"></div>
-        </div>
-        <p style="font-size:.72rem;color:var(--text3);margin-top:10px">Status: <strong style="color:${DEMO?'var(--danger)':'var(--p)'}">${DEMO?'Demo Mode (localStorage)':'Terhubung ke Supabase'}</strong></p>
-        ${DEMO?`<button class="btn btn-p btn-sm" style="margin-top:10px" onclick="reconnectSupabase()">Hubungkan Supabase</button>`:''}
-      </div>
+      <div class="card-header"><h3>Supabase</h3></div>
+      <div class="card-body">${DEMO?'Mode demo — data disimpan di browser.':'Mode Supabase — data dibatasi berdasarkan peran akun.'}</div>
     </div>
 
     <div class="card">
@@ -1368,7 +1339,7 @@ function pgSettings(){
         <table>
           <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Detail</th></tr></thead>
           <tbody>${DDB.logs.slice(-20).reverse().map(l=>`
-            <tr><td style="font-size:.72rem">${fdt(l.time)}</td><td>${l.user}</td><td>${l.action}</td><td style="font-size:.78rem;color:var(--text3)">${l.detail}</td></tr>
+            <tr><td style="font-size:.72rem">${fdt(l.time)}</td><td>${esc(l.user)}</td><td>${esc(l.action)}</td><td style="font-size:.78rem;color:var(--text3)">${esc(l.detail)}</td></tr>
           `).join('')}</tbody>
         </table>
       </div></div>
@@ -1378,15 +1349,6 @@ function pgSettings(){
 
 function saveSetting(key,val){S.settings[key]=val;localStorage.setItem('appSettings',JSON.stringify(S.settings));toast('Pengaturan disimpan')}
 
-function reconnectSupabase(){
-  const url=S.settings.sb_url,key=S.settings.sb_key;
-  if(!url||!key)return toast('Isi Project URL dan Anon Key terlebih dahulu','error');
-  try{
-    sb=supabase.createClient(url,key);DEMO=false;
-    toast('Supabase terhubung! Muat ulang halaman untuk efek penuh.');
-    addLog('Sistem','Supabase dihubungkan');nav('settings');
-  }catch(e){toast('Gagal: '+e.message,'error')}
-}
 
 /* ═══════════════════════════════════════
    IMPORT / EXPORT GENERIC
@@ -1423,8 +1385,7 @@ function exportData(type){
     'ronda':{data:DDB.ronda.map(r=>({Kelompok:r.group,Anggota:r.members,Hari:r.day,Waktu:r.time})),name:'jadwal-ronda'},
   };
   const m=map[type];if(!m)return;
-  exportExcel(m.data,m.name);
-  addLog('Ekspor','Excel: '+type);toast('File Excel diunduh');
+  return exportExcel(m.data,m.name);
 }
 
 /* ═══════════════════════════════════════
@@ -1434,25 +1395,18 @@ function showLogin(){$('#app').style.display='none';$('#loginPage').style.displa
 function showApp(){
   $('#loginPage').style.display='none';$('#app').style.display='block';
   $('#sfName').textContent=S.profile?.name||'-';
-  $('#sfRole').textContent=S.profile?.role==='pengurus'?'Pengurus RT':'Warga';
+  $('#sfRole').textContent=S.profile?.role==='admin'?'Admin':isStaff()?'Pengurus RT':'Warga';
   $('#sfAvatar').textContent=initials(S.profile?.name||'?');
   applyTheme();renderNav();nav('home');
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  DDB.init();
-
-  // Splash
-  setTimeout(()=>{
-    $('#splash').classList.add('hide');
-    setTimeout(()=>$('#splash').remove(),500);
-    // Check session
-    if(restoreSession()){showApp()}else{showLogin()}
-  },2000);
-
-  // Fallback splash removal
-  setTimeout(()=>{const sp=$('#splash');if(sp)sp.remove()},2500);
-});
 </script>
+<script src="config.js"></script>
+<script src="ui.js"></script>
+<script src="ronda.js"></script>
+<script src="manage.js"></script>
+<script src="reports.js"></script>
+<script src="excel.js"></script>
+<script src="backend.js"></script>
 </body>
 </html>
