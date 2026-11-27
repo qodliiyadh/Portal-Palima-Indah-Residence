@@ -1,1944 +1,1458 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Palima Indah Residence</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #34D399;
-            --primary-dark: #10B981;
-            --primary-light: #A7F3D0;
-            --secondary: #6EE7B7;
-            --accent: #FCD34D;
-            --bg-main: #F0FDF4;
-            --bg-card: #FFFFFF;
-            --text-dark: #064E3B;
-            --text-medium: #047857;
-            --text-light: #6B7280;
-            --border: #D1FAE5;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            --info: #3B82F6;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--bg-main) 0%, #ECFDF5 100%);
-            color: var(--text-dark);
-            min-height: 100vh;
-            padding-bottom: 80px;
-        }
-
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.5s ease;
-        }
-
-        .loading-screen.hide {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loading-logo {
-            width: 100px;
-            height: 100px;
-            background: white;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            margin-bottom: 20px;
-            animation: pulse 1.5s ease-in-out infinite;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-
-        .loading-text {
-            color: white;
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .loading-subtext {
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .container {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .user-details h3 {
-            font-size: 16px;
-            color: var(--text-dark);
-            margin-bottom: 2px;
-        }
-
-        .user-details p {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        .logout-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .logo {
-            font-size: 36px;
-            margin-bottom: 5px;
-        }
-
-        .logo-text {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 2px;
-        }
-
-        .logo-subtext {
-            font-size: 13px;
-            color: var(--text-light);
-        }
-
-        .time-section {
-            text-align: center;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--primary-light) 0%, #D1FAE5 100%);
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
-
-        .time {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-        }
-
-        .date {
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
-        .prayer-times {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .prayer-item {
-            text-align: center;
-            padding: 8px;
-            background: white;
-            border-radius: 10px;
-        }
-
-        .prayer-name {
-            font-size: 11px;
-            color: var(--text-light);
-            margin-bottom: 3px;
-        }
-
-        .prayer-time {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .prayer-item.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .prayer-item.active .prayer-name,
-        .prayer-item.active .prayer-time {
-            color: white;
-        }
-
-        .announcements {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .announcement-item {
-            padding: 15px;
-            background: var(--bg-main);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .announcement-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-        }
-
-        .announcement-text {
-            font-size: 12px;
-            color: var(--text-medium);
-            margin-bottom: 8px;
-        }
-
-        .announcement-time {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .menu-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-        }
-
-        .menu-card:active {
-            transform: scale(0.95);
-        }
-
-        .menu-card:hover {
-            box-shadow: 0 6px 30px rgba(16, 185, 129, 0.2);
-        }
-
-        .menu-icon {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
-
-        .menu-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-        }
-
-        .menu-desc {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        .badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--danger);
-            color: white;
-            border-radius: 10px;
-            padding: 2px 8px;
-            font-size: 10px;
-            font-weight: 700;
-        }
-
-        .schedule-section {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
-        }
-
-        .schedule-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: var(--bg-main);
-            border-radius: 12px;
-            margin-bottom: 10px;
-        }
-
-        .schedule-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .schedule-details {
-            flex: 1;
-        }
-
-        .schedule-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 3px;
-        }
-
-        .schedule-time {
-            font-size: 12px;
-            color: var(--text-medium);
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            z-index: 1000;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            padding: 5px 15px;
-            border-radius: 10px;
-            transition: background 0.2s;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-main);
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-icon {
-            font-size: 24px;
-        }
-
-        .nav-label {
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 25px;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 28px;
-            color: var(--text-light);
-            cursor: pointer;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .form-input, .form-select, .form-textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border 0.2s;
-        }
-
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .file-upload {
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .file-upload:hover {
-            border-color: var(--primary);
-            background: var(--bg-main);
-        }
-
-        .file-upload input {
-            display: none;
-        }
-
-        .file-upload-icon {
-            font-size: 36px;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .file-upload-text {
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
-        .file-preview {
-            margin-top: 10px;
-            padding: 10px;
-            background: var(--bg-main);
-            border-radius: 8px;
-            font-size: 12px;
-            color: var(--text-dark);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-secondary {
-            background: var(--text-light);
-            color: white;
-        }
-
-        .bill-card {
-            background: var(--bg-main);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .bill-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .bill-month {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .bill-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: #FEF3C7;
-            color: #92400E;
-        }
-
-        .status-paid {
-            background: #D1FAE5;
-            color: #065F46;
-        }
-
-        .status-verified {
-            background: #DBEAFE;
-            color: #1E40AF;
-        }
-
-        .bill-detail {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-
-        .bill-label {
-            color: var(--text-medium);
-        }
-
-        .bill-value {
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-
-        .bill-total {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px dashed var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .bill-total-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .bill-total-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-
-        .complaint-card, .letter-card, .resident-card {
-            background: white;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .card-date {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        .card-content {
-            font-size: 13px;
-            color: var(--text-medium);
-            margin-bottom: 10px;
-        }
-
-        .card-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        .login-container {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .login-box {
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
-            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15);
-        }
-
-        .login-logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .login-logo-icon {
-            font-size: 64px;
-            margin-bottom: 15px;
-        }
-
-        .tab-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid var(--border);
-            background: white;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .cashbook-summary {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .summary-card {
-            background: var(--bg-main);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .summary-label {
-            font-size: 11px;
-            color: var(--text-light);
-            margin-bottom: 5px;
-        }
-
-        .summary-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .transaction-info {
-            flex: 1;
-        }
-
-        .transaction-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 3px;
-        }
-
-        .transaction-date {
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        .transaction-amount {
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .transaction-amount.income {
-            color: var(--primary-dark);
-        }
-
-        .transaction-amount.expense {
-            color: var(--danger);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-light);
-        }
-
-        .empty-icon {
-            font-size: 64px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        .empty-text {
-            font-size: 14px;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-
-            .menu-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Portal Palima Indah Residence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--p:#059669;--p-light:#34D399;--p-lighter:#A7F3D0;--p-bg:#ECFDF5;--p-dark:#047857;
+--accent:#F59E0B;--danger:#EF4444;--info:#3B82F6;
+--bg:#F0FDF4;--card:#FFFFFF;--text:#064E3B;--text2:#047857;--text3:#6B7280;--border:#D1FAE5;
+--radius:16px;--shadow:0 4px 24px rgba(5,150,105,.08);--font:'Plus Jakarta Sans',system-ui,sans-serif;
+--sidebar-w:260px;--header-h:64px;
+}
+[data-theme="dark"]{
+--bg:#0F1A14;--card:#162B22;--text:#D1FAE5;--text2:#A7F3D0;--text3:#6EE7B7;--border:#1E3A2F;
+--shadow:0 4px 24px rgba(0,0,0,.3);
+}
+html{font-size:15px}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:var(--font);outline:none}
+img{max-width:100%}
+
+/* ── Splash ── */
+.splash{position:fixed;inset:0;background:linear-gradient(135deg,var(--p),var(--p-light));z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s}
+.splash.hide{opacity:0;pointer-events:none}
+.splash-logo{width:88px;height:88px;background:#fff;border-radius:22px;display:grid;place-items:center;font-size:44px;animation:bob 1.6s ease-in-out infinite;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.splash h1{color:#fff;font-size:1.4rem;margin-top:18px;font-weight:700}
+.splash p{color:rgba(255,255,255,.85);font-size:.82rem;margin-top:4px}
+
+/* ── Layout ── */
+.app{display:none}
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.sidebar-brand{padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.sidebar-brand-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--p),var(--p-light));display:grid;place-items:center;font-size:22px;color:#fff;flex-shrink:0}
+.sidebar-brand h2{font-size:.95rem;color:var(--text);line-height:1.2}
+.sidebar-brand small{font-size:.7rem;color:var(--text3);font-weight:400}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px}
+.nav-group-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:12px 12px 6px;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:.85rem;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--p-bg);color:var(--p)}
+.nav-item.active{background:var(--p);color:#fff}
+.nav-item .ni{width:22px;text-align:center;font-size:1.05rem}
+.nav-badge{margin-left:auto;background:var(--danger);color:#fff;font-size:.6rem;padding:2px 7px;border-radius:20px;font-weight:700}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-footer .avatar-sm{width:34px;height:34px;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;font-size:.8rem;font-weight:700;flex-shrink:0}
+.sidebar-footer-info{flex:1;min-width:0}
+.sidebar-footer-info h4{font-size:.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-footer-info p{font-size:.65rem;color:var(--text3)}
+
+.main{margin-left:var(--sidebar-w);min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:var(--header-h);background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:90}
+.topbar .hamburger{display:none;background:none;font-size:1.4rem;color:var(--text)}
+.topbar-title{font-size:1.05rem;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.topbar-actions button{width:36px;height:36px;border-radius:10px;background:var(--p-bg);color:var(--p);display:grid;place-items:center;font-size:1.1rem;position:relative}
+.topbar-actions .notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--card)}
+.content{flex:1;padding:24px;max-width:1200px;width:100%}
+
+/* ── Mobile bottom nav ── */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);z-index:100;padding:6px 0 env(safe-area-inset-bottom,8px)}
+.bottom-nav-inner{display:flex;justify-content:space-around}
+.bnav{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;font-size:.62rem;color:var(--text3);font-weight:600;background:none;min-width:0;flex:1}
+.bnav .bi{font-size:1.3rem}
+.bnav.active{color:var(--p)}
+.bnav.active .bi{transform:scale(1.1)}
+
+/* ── Cards ── */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden}
+.card-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-header h3{font-size:.95rem;font-weight:700}
+.card-body{padding:20px}
+.card-body.np{padding:0}
+
+/* ── Stats row ── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid var(--border);display:flex;align-items:center;gap:16px;box-shadow:var(--shadow)}
+.stat-icon{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.4rem;flex-shrink:0}
+.stat-icon.green{background:var(--p-bg);color:var(--p)}
+.stat-icon.amber{background:#FEF3C7;color:#D97706}
+.stat-icon.red{background:#FEE2E2;color:var(--danger)}
+.stat-icon.blue{background:#DBEAFE;color:var(--info)}
+.stat-info h4{font-size:1.5rem;font-weight:800;line-height:1}
+.stat-info p{font-size:.72rem;color:var(--text3);margin-top:2px}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead{background:var(--p-bg)}
+th{text-align:left;padding:12px 16px;font-weight:700;color:var(--p-dark);white-space:nowrap}
+td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.badge-s{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:700}
+.badge-green{background:#D1FAE5;color:#065F46}
+.badge-amber{background:#FEF3C7;color:#92400E}
+.badge-red{background:#FEE2E2;color:#991B1B}
+.badge-blue{background:#DBEAFE;color:#1E40AF}
+
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:10px;font-size:.82rem;font-weight:600;transition:all .15s}
+.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--p-dark)}
+.btn-o{background:var(--p-bg);color:var(--p);border:1px solid var(--p-lighter)}.btn-o:hover{background:var(--p-lighter)}
+.btn-d{background:#FEE2E2;color:var(--danger)}.btn-d:hover{background:#FECACA}
+.btn-wa{background:#25D366;color:#fff}.btn-wa:hover{background:#1DA851}
+.btn-sm{padding:7px 12px;font-size:.74rem;border-radius:8px}
+.btn-icon{width:34px;height:34px;padding:0;justify-content:center;border-radius:9px}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── Forms ── */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg label{font-size:.78rem;font-weight:600;color:var(--text2)}
+.fg input,.fg select,.fg textarea{padding:10px 14px;border:2px solid var(--border);border-radius:10px;font-size:.85rem;background:var(--card);color:var(--text);transition:border .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--p)}
+.fg textarea{min-height:90px;resize:vertical}
+.file-drop{border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .15s}
+.file-drop:hover{border-color:var(--p);background:var(--p-bg)}
+.file-drop input{display:none}
+
+/* ── Modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--card);border-radius:var(--radius);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:mUp .25s ease}
+@keyframes mUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-head{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:1rem;font-weight:700}
+.modal-close{background:none;font-size:1.3rem;color:var(--text3)}
+.modal-body{padding:20px}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+/* ── Toast ── */
+.toast-box{position:fixed;top:20px;right:20px;z-index:600;display:flex;flex-direction:column;gap:8px}
+.toast{padding:14px 20px;border-radius:12px;font-size:.82rem;font-weight:600;color:#fff;animation:tIn .3s ease;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.toast.success{background:var(--p)}.toast.error{background:var(--danger)}.toast.info{background:var(--info)}
+@keyframes tIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* ── Login page ── */
+.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,var(--p-bg),#D1FAE5)}
+.login-card{background:var(--card);border-radius:24px;padding:40px 32px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(5,150,105,.12)}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo div{font-size:52px;margin-bottom:8px}
+.login-logo h1{font-size:1.3rem;color:var(--p-dark)}
+.login-logo p{font-size:.78rem;color:var(--text3)}
+
+/* ── Prayer widget ── */
+.prayer-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+.pr-item{text-align:center;padding:8px 4px;border-radius:10px;background:var(--card);border:1px solid var(--border)}
+.pr-item.now{background:var(--p);color:#fff;border-color:var(--p)}
+.pr-item .pr-n{font-size:.6rem;font-weight:600;opacity:.8}.pr-item .pr-t{font-size:.82rem;font-weight:700}
+.pr-item.now .pr-n,.pr-item.now .pr-t{color:#fff}
+
+/* ── Quick actions grid ── */
+.quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.quick-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 14px;text-align:center;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.quick-card:hover{border-color:var(--p);transform:translateY(-2px)}
+.quick-card .qi{font-size:1.8rem;margin-bottom:8px}
+.quick-card h4{font-size:.78rem;font-weight:700;margin-bottom:2px}
+.quick-card p{font-size:.62rem;color:var(--text3)}
+
+/* ── Settings ── */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-row label{font-size:.85rem;font-weight:600}
+.setting-row small{font-size:.7rem;color:var(--text3)}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--p)}
+.toggle::after{content:'';width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle.on::after{transform:translateX(20px)}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:99}
+  .sidebar-overlay.show{display:block}
+  .main{margin-left:0}
+  .topbar .hamburger{display:block}
+  .bottom-nav{display:block}
+  .content{padding:16px;padding-bottom:90px}
+  .stats{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat-card{padding:14px}
+  .stat-icon{width:40px;height:40px;font-size:1.1rem}
+  .stat-info h4{font-size:1.15rem}
+  .quick-grid{grid-template-columns:repeat(2,1fr)}
+  .form-grid{grid-template-columns:1fr}
+  .prayer-row{grid-template-columns:repeat(5,1fr);gap:4px}
+  .pr-item{padding:6px 2px}.pr-item .pr-t{font-size:.72rem}
+  .btn-group{flex-direction:column}
+  .btn-group .btn{width:100%;justify-content:center}
+}
+@media(max-width:380px){
+  .stats{grid-template-columns:1fr}
+  .prayer-row{grid-template-columns:repeat(3,1fr)}
+}
+</style>
 </head>
 <body>
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-logo">🏘️</div>
-        <div class="loading-text">Palima Indah Residence</div>
-        <div class="loading-subtext">Memuat portal warga...</div>
+
+<!-- Splash -->
+<div class="splash" id="splash">
+  <div class="splash-logo">🏘️</div>
+  <h1>Palima Indah Residence</h1>
+  <p>Memuat portal warga …</p>
+</div>
+
+<!-- Toast container -->
+<div class="toast-box" id="toastBox"></div>
+
+<!-- App shell -->
+<div class="app" id="app">
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon" id="sidebarLogo">🏘️</div>
+      <div><h2 id="sidebarTitle">Palima Indah</h2><small>Portal Warga</small></div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+      <div class="avatar-sm" id="sfAvatar">?</div>
+      <div class="sidebar-footer-info"><h4 id="sfName">-</h4><p id="sfRole">-</p></div>
+      <button class="btn-icon btn-d" onclick="doLogout()" title="Keluar">🚪</button>
+    </div>
+  </aside>
+
+  <!-- Main area -->
+  <div class="main">
+    <header class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <span class="topbar-title" id="pageTitle">Beranda</span>
+      <div class="topbar-actions">
+        <button onclick="nav('announcements')" title="Pengumuman">🔔<span class="notif-dot"></span></button>
+        <button onclick="toggleTheme()" title="Tema" id="themeBtn">🌙</button>
+      </div>
+    </header>
+    <main class="content" id="pageContent"></main>
+  </div>
+
+  <!-- Bottom nav (mobile) -->
+  <div class="bottom-nav"><div class="bottom-nav-inner" id="bottomNav"></div></div>
+</div>
+
+<!-- Login page (separate from app shell) -->
+<div id="loginPage" style="display:none">
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">
+        <div>🏘️</div>
+        <h1>Palima Indah Residence</h1>
+        <p>Portal Warga Digital</p>
+      </div>
+      <form id="loginForm" onsubmit="return handleLogin(event)">
+        <div class="fg" style="margin-bottom:14px">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="contoh@email.com" required>
+        </div>
+        <div class="fg" style="margin-bottom:20px">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="••••••••" required>
+        </div>
+        <button class="btn btn-p" style="width:100%;justify-content:center;padding:13px" type="submit">Masuk</button>
+      </form>
+      <div style="margin-top:18px;padding:14px;background:var(--p-bg);border-radius:12px;font-size:.74rem;color:var(--text2)">
+        <strong>Demo — belum hubungkan Supabase?</strong><br>
+        Ketik email & password apa saja untuk masuk sebagai <b>Warga</b>.<br>
+        Gunakan email mengandung kata <b>admin</b> untuk masuk sebagai <b>Pengurus</b>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal shell -->
+<div class="modal-overlay" id="modal" onclick="event.target===this&&closeModal()">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="modalTitle">-</h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   CONFIG — ganti dengan nilai Supabase Anda
+   ═══════════════════════════════════════ */
+const SUPABASE_URL  = 'https://YOUR_PROJECT.supabase.co';
+const SUPABASE_ANON = 'YOUR_ANON_KEY';
+
+let sb = null;        // Supabase client (null = demo mode)
+let DEMO = true;      // true = localStorage, false = Supabase
+
+try {
+  if (SUPABASE_URL.includes('YOUR_PROJECT')) throw 'no config';
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  DEMO = false;
+} catch(e) { console.log('Demo mode — Supabase not configured') }
+
+/* ═══════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════ */
+const S = {
+  user: null, profile: null,
+  page: 'home',
+  theme: localStorage.getItem('theme') || 'light',
+  settings: JSON.parse(localStorage.getItem('appSettings') || '{}'),
+};
+
+/* ═══════════════════════════════════════
+   DEMO DATABASE (localStorage)
+   ═══════════════════════════════════════ */
+const DDB = {
+  _get(k){ return JSON.parse(localStorage.getItem('pir_'+k) || '[]') },
+  _set(k,v){ localStorage.setItem('pir_'+k, JSON.stringify(v)) },
+  profiles:   null,
+  bills:      null,
+  payments:   null,
+  complaints: null,
+  letters:    null,
+  transactions:null,
+  announcements:null,
+  schedules:  null,
+  ronda:      null,
+  residents:  null,
+  logs:       null,
+
+  init(){
+    const tables = ['profiles','bills','payments','complaints','letters','transactions','announcements','schedules','ronda','residents','logs'];
+    tables.forEach(t => this[t] = this._get(t));
+
+    if(!this.profiles.length){
+      this.profiles = [
+        {id:'u1',email:'warga@demo.com',name:'Budi Santoso',role:'warga',address:'Blok A No. 15',phone:'6281234567890',ktp:'3201234567890001',verified:true,created_at:new Date().toISOString()},
+        {id:'u2',email:'admin@demo.com',name:'Ahmad Fauzi',role:'pengurus',address:'Blok B No. 3',phone:'6281298765432',ktp:'3201234567890002',verified:true,created_at:new Date().toISOString()},
+        {id:'u3',email:'siti@demo.com',name:'Siti Nurhaliza',role:'warga',address:'Blok C No. 8',phone:'6281345678901',ktp:'3201234567890003',verified:true,created_at:new Date().toISOString()},
+      ];
+      this._set('profiles',this.profiles);
+    }
+    if(!this.announcements.length){
+      this.announcements=[
+        {id:'a1',title:'Iuran Desember 2026',content:'Mohon segera lakukan pembayaran iuran bulan Desember sebelum tanggal 10. Terima kasih.', priority:'high',created_at:new Date().toISOString()},
+        {id:'a2',title:'Kerja Bakti Minggu Depan',content:'Kerja bakti diadakan Minggu 30 Nov 2026 pukul 07.00 WIB di area taman blok A.', priority:'medium',created_at:new Date().toISOString()},
+      ];
+      this._set('announcements',this.announcements);
+    }
+    if(!this.schedules.length){
+      this.schedules=[
+        {id:'s1',title:'Senam Pagi',day:'Minggu',time:'07:00',icon:'🤸',created_at:new Date().toISOString()},
+        {id:'s2',title:'Pengajian Rutin',day:'Jumat',time:'19:30',icon:'📖',created_at:new Date().toISOString()},
+        {id:'s3',title:'Posyandu',day:'Rabu (Minggu ke-2)',time:'09:00',icon:'🏥',created_at:new Date().toISOString()},
+      ];
+      this._set('schedules',this.schedules);
+    }
+    if(!this.ronda.length){
+      this.ronda=[
+        {id:'r1',group:'Kelompok A',members:'Budi, Joko, Dedi',day:'Senin & Kamis',time:'22:00 – 05:00',created_at:new Date().toISOString()},
+        {id:'r2',group:'Kelompok B',members:'Ahmad, Rian, Hadi',day:'Selasa & Jumat',time:'22:00 – 05:00',created_at:new Date().toISOString()},
+        {id:'r3',group:'Kelompok C',members:'Slamet, Udin, Fajar',day:'Rabu & Sabtu',time:'22:00 – 05:00',created_at:new Date().toISOString()},
+      ];
+      this._set('ronda',this.ronda);
+    }
+    if(!this.bills.length){
+      const months=['Oktober 2026','November 2026','Desember 2026'];
+      months.forEach((m,i)=>{
+        this.bills.push({id:'b'+(i+1),user_id:'u1',month:m,items:[{name:'Iuran Keamanan',amount:100000},{name:'Iuran Kebersihan',amount:50000},{name:'Iuran Listrik Jalan',amount:25000}],total:175000,status:i===0?'verified':i===1?'paid':'pending',created_at:new Date().toISOString()});
+        this.bills.push({id:'b'+(i+4),user_id:'u3',month:m,items:[{name:'Iuran Keamanan',amount:100000},{name:'Iuran Kebersihan',amount:50000},{name:'Iuran Listrik Jalan',amount:25000}],total:175000,status:i<2?'verified':'pending',created_at:new Date().toISOString()});
+      });
+      this._set('bills',this.bills);
+    }
+    if(!this.transactions.length){
+      this.transactions=[
+        {id:'t1',type:'income',title:'Iuran Warga Oktober',amount:5250000,date:'2026-10-15',created_at:new Date().toISOString()},
+        {id:'t2',type:'expense',title:'Gaji Satpam',amount:2000000,date:'2026-10-20',created_at:new Date().toISOString()},
+        {id:'t3',type:'expense',title:'Perbaikan Lampu Jalan',amount:350000,date:'2026-11-05',created_at:new Date().toISOString()},
+        {id:'t4',type:'income',title:'Iuran Warga November',amount:5425000,date:'2026-11-15',created_at:new Date().toISOString()},
+        {id:'t5',type:'expense',title:'Perawatan Taman',amount:500000,date:'2026-11-22',created_at:new Date().toISOString()},
+      ];
+      this._set('transactions',this.transactions);
+    }
+    if(!this.residents.length){
+      this.residents = this.profiles.map(p=>({...p}));
+      this._set('residents',this.residents);
+    }
+  },
+  save(t){ this._set(t,this[t]) },
+  add(t,row){ row.id=row.id||uid(); row.created_at=new Date().toISOString(); this[t].push(row); this.save(t); return row },
+  update(t,id,data){ const i=this[t].findIndex(r=>r.id===id); if(i>=0){Object.assign(this[t][i],data); this.save(t)} },
+  remove(t,id){ this[t]=this[t].filter(r=>r.id!==id); this.save(t) },
+};
+
+/* ═══════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════ */
+const uid=()=>'_'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const rp=n=>new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',minimumFractionDigits:0}).format(n);
+const fd=d=>new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'long',year:'numeric'}).format(new Date(d));
+const fdt=d=>new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(d));
+const initials=n=>n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+function toast(msg,type='success'){
+  const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+  $('#toastBox').appendChild(t);setTimeout(()=>t.remove(),3500);
+}
+
+function waLink(phone,text){
+  const p=phone.replace(/\D/g,'');
+  return `https://api.whatsapp.com/send?phone=${p}&text=${encodeURIComponent(text)}`;
+}
+
+function waOpen(phone,text){ window.open(waLink(phone,text),'_blank') }
+
+function waSend(phone,text){
+  // If WA Business API is configured, send via API; otherwise fall back to link
+  const apiKey = S.settings.wa_api_key;
+  const apiUrl = S.settings.wa_api_url;
+  if(apiKey && apiUrl){
+    fetch(apiUrl,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({messaging_product:'whatsapp',to:phone.replace(/\D/g,''),type:'text',text:{body:text}})
+    }).then(r=>{if(r.ok)toast('Pesan WhatsApp terkirim');else toast('Gagal kirim WA, buka manual','error')})
+      .catch(()=>waOpen(phone,text));
+  } else {
+    waOpen(phone,text);
+  }
+}
+
+/* ── Prayer times (simple calculation) ── */
+function prayerTimes(){
+  const h=new Date().getHours();
+  const list=[
+    {n:'Subuh',t:'04:32',s:4,e:6},{n:'Dzuhur',t:'11:55',s:12,e:15},{n:'Ashar',t:'15:12',s:15,e:18},
+    {n:'Maghrib',t:'17:58',s:18,e:19},{n:'Isya',t:'19:10',s:19,e:23}
+  ];
+  return list.map(p=>({...p,now:h>=p.s&&h<p.e}));
+}
+
+/* ── Import / Export ── */
+function exportExcel(data, filename, sheetName='Data'){
+  const ws=XLSX.utils.json_to_sheet(data);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  XLSX.utils.sheet_add_aoa(ws,[Object.keys(data[0]||{})],{origin:'A1'});
+  XLSX.writeFile(wb,filename+'.xlsx');
+}
+
+function exportPDF(columns, rows, title, filename){
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  doc.setFontSize(14);doc.text(title,14,20);
+  doc.setFontSize(8);doc.text('Diekspor: '+fdt(new Date()),14,27);
+  doc.autoTable({head:[columns],body:rows,startY:32,styles:{fontSize:7},headStyles:{fillColor:[5,150,105]}});
+  doc.save(filename+'.pdf');
+}
+
+function importExcel(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      try{
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        resolve(XLSX.utils.sheet_to_json(ws));
+      }catch(err){reject(err)}
+    };
+    r.onerror=reject;
+    r.readAsArrayBuffer(file);
+  });
+}
+
+/* ── File to base64 ── */
+function toBase64(file){return new Promise(r=>{const fr=new FileReader();fr.onloadend=()=>r(fr.result);fr.readAsDataURL(file)})}
+
+/* ═══════════════════════════════════════
+   AUTH
+   ═══════════════════════════════════════ */
+async function handleLogin(e){
+  e.preventDefault();
+  const email=$('#loginEmail').value.trim();
+  const pass=$('#loginPass').value;
+  if(!email||!pass)return toast('Isi email dan password','error');
+
+  if(DEMO){
+    // Demo mode
+    const isAdmin=email.toLowerCase().includes('admin');
+    let prof=DDB.profiles.find(p=>p.email===email);
+    if(!prof){
+      prof={id:uid(),email,name:email.split('@')[0],role:isAdmin?'pengurus':'warga',address:'-',phone:'628100000000',verified:false};
+      DDB.add('profiles',prof);
+      DDB.add('residents',{...prof});
+    }
+    S.user={id:prof.id,email};S.profile=prof;
+    localStorage.setItem('pir_session',JSON.stringify({user:S.user,profile:S.profile}));
+    addLog('Login',`${prof.name} masuk sebagai ${prof.role}`);
+    showApp();return false;
+  }
+
+  // Real Supabase
+  const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  if(error){toast(error.message,'error');return false}
+  S.user=data.user;
+  const{data:prof}=await sb.from('profiles').select('*').eq('id',data.user.id).single();
+  S.profile=prof||{id:data.user.id,email,name:email.split('@')[0],role:'warga'};
+  addLog('Login',`${S.profile.name} masuk`);
+  showApp();return false;
+}
+
+function restoreSession(){
+  if(DEMO){
+    const s=JSON.parse(localStorage.getItem('pir_session')||'null');
+    if(s){S.user=s.user;S.profile=s.profile;return true}
+    return false;
+  }
+  return false; // Supabase handles via onAuthStateChange
+}
+
+async function doLogout(){
+  if(!DEMO&&sb)await sb.auth.signOut();
+  S.user=null;S.profile=null;localStorage.removeItem('pir_session');
+  addLog('Logout','Pengguna keluar');
+  showLogin();
+}
+
+/* ═══════════════════════════════════════
+   LOGGING
+   ═══════════════════════════════════════ */
+function addLog(action,detail){
+  const entry={id:uid(),action,detail,user:S.profile?.name||'-',time:new Date().toISOString()};
+  DDB.logs.push(entry);DDB.save('logs');
+}
+
+/* ═══════════════════════════════════════
+   NAV CONFIG
+   ═══════════════════════════════════════ */
+function getNavItems(){
+  const isAdmin=S.profile?.role==='pengurus';
+  const common=[
+    {id:'home',icon:'🏠',label:'Beranda',group:'Menu'},
+    {id:'announcements',icon:'📢',label:'Pengumuman',group:'Menu'},
+  ];
+  const warga=[
+    {id:'my-bills',icon:'💰',label:'Iuran Saya',group:'Layanan Warga'},
+    {id:'my-complaints',icon:'📝',label:'Pengaduan',group:'Layanan Warga'},
+    {id:'my-letters',icon:'📄',label:'Pengajuan Surat',group:'Layanan Warga'},
+  ];
+  const admin=[
+    {id:'residents',icon:'👥',label:'Data Warga',group:'Pengurus',badge:DDB.residents.filter(r=>!r.verified).length||null},
+    {id:'bills-manage',icon:'💰',label:'Kelola Iuran',group:'Pengurus'},
+    {id:'complaints-manage',icon:'📋',label:'Pengaduan Masuk',group:'Pengurus',badge:DDB.complaints.filter(c=>c.status==='pending').length||null},
+    {id:'letters-manage',icon:'📄',label:'Pengajuan Surat',group:'Pengurus',badge:DDB.letters.filter(l=>l.status==='pending').length||null},
+    {id:'cashbook',icon:'💼',label:'Buku Kas',group:'Pengurus'},
+    {id:'schedules',icon:'📅',label:'Jadwal Kegiatan',group:'Pengurus'},
+    {id:'ronda',icon:'🛡️',label:'Jadwal Ronda',group:'Pengurus'},
+    {id:'cctv',icon:'📹',label:'CCTV',group:'Pengurus'},
+    {id:'settings',icon:'⚙️',label:'Pengaturan',group:'Pengurus'},
+  ];
+  return [...common,...(isAdmin?admin:warga)];
+}
+
+function renderNav(){
+  const items=getNavItems();
+  let html='';let lastG='';
+  items.forEach(i=>{
+    if(i.group!==lastG){html+=`<div class="nav-group-label">${i.group}</div>`;lastG=i.group}
+    html+=`<div class="nav-item ${S.page===i.id?'active':''}" onclick="nav('${i.id}')">
+      <span class="ni">${i.icon}</span>${i.label}${i.badge?`<span class="nav-badge">${i.badge}</span>`:''}
+    </div>`;
+  });
+  $('#sidebarNav').innerHTML=html;
+
+  // Bottom nav (mobile) — max 5 items
+  const bot=items.slice(0,5);
+  $('#bottomNav').innerHTML=bot.map(i=>`
+    <button class="bnav ${S.page===i.id?'active':''}" onclick="nav('${i.id}')">
+      <span class="bi">${i.icon}</span>${i.label}
+    </button>
+  `).join('');
+}
+
+function nav(page){S.page=page;renderNav();renderPage();closeSidebar();$('#pageTitle').textContent=getNavItems().find(i=>i.id===page)?.label||'Portal'}
+
+/* ═══════════════════════════════════════
+   SIDEBAR TOGGLE
+   ═══════════════════════════════════════ */
+function toggleSidebar(){$('#sidebar').classList.toggle('open');$('#sidebarOverlay').classList.toggle('show')}
+function closeSidebar(){$('#sidebar').classList.remove('open');$('#sidebarOverlay').classList.remove('show')}
+
+/* ═══════════════════════════════════════
+   THEME
+   ═══════════════════════════════════════ */
+function applyTheme(){document.documentElement.setAttribute('data-theme',S.theme);$('#themeBtn').textContent=S.theme==='dark'?'☀️':'🌙'}
+function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';localStorage.setItem('theme',S.theme);applyTheme()}
+
+/* ═══════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════ */
+function openModal(title,bodyHtml,footHtml=''){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=bodyHtml;$('#modalFoot').innerHTML=footHtml;$('#modal').classList.add('show')}
+function closeModal(){$('#modal').classList.remove('show')}
+
+/* ═══════════════════════════════════════
+   PAGE RENDERERS
+   ═══════════════════════════════════════ */
+function renderPage(){
+  const p=S.page;const c=$('#pageContent');
+  const pages={
+    'home':pgHome,'announcements':pgAnnouncements,
+    'my-bills':pgMyBills,'my-complaints':pgMyComplaints,'my-letters':pgMyLetters,
+    'residents':pgResidents,'bills-manage':pgBillsManage,'complaints-manage':pgComplaintsManage,
+    'letters-manage':pgLettersManage,'cashbook':pgCashbook,'schedules':pgSchedules,
+    'ronda':pgRonda,'cctv':pgCCTV,'settings':pgSettings,
+  };
+  c.innerHTML=(pages[p]||pgHome)();
+  window.scrollTo({top:0});
+}
+
+/* ── HOME ── */
+function pgHome(){
+  const pt=prayerTimes();
+  const isAdmin=S.profile?.role==='pengurus';
+  const totalIncome=DDB.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const totalExpense=DDB.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const myBills=DDB.bills.filter(b=>b.user_id===S.profile?.id);
+  const pendingBills=myBills.filter(b=>b.status==='pending');
+
+  return `
+    <div style="margin-bottom:20px">
+      <h2 style="font-size:1.3rem;margin-bottom:4px">Halo, ${S.profile?.name?.split(' ')[0]} 👋</h2>
+      <p style="color:var(--text3);font-size:.85rem">${fd(new Date())} — ${new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})} WIB</p>
     </div>
 
-    <div id="app"></div>
+    <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,var(--p),var(--p-light));color:#fff;border:none">
+      <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:.75rem;opacity:.85">Jadwal Sholat Hari Ini</div>
+          <div class="prayer-row" style="margin-top:8px">
+            ${pt.map(p=>`<div class="pr-item ${p.now?'now':''}"><div class="pr-n">${p.n}</div><div class="pr-t">${p.t}</div></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <script>
-        // ===== DATABASE & STATE MANAGEMENT =====
-        const DB = {
-            users: JSON.parse(localStorage.getItem('users') || '[]'),
-            bills: JSON.parse(localStorage.getItem('bills') || '[]'),
-            complaints: JSON.parse(localStorage.getItem('complaints') || '[]'),
-            letters: JSON.parse(localStorage.getItem('letters') || '[]'),
-            residents: JSON.parse(localStorage.getItem('residents') || '[]'),
-            transactions: JSON.parse(localStorage.getItem('transactions') || '[]'),
-            announcements: JSON.parse(localStorage.getItem('announcements') || '[]'),
-            schedules: JSON.parse(localStorage.getItem('schedules') || '[]'),
-            
-            save(key) {
-                localStorage.setItem(key, JSON.stringify(this[key]));
-            },
-            
-            init() {
-                // Demo data
-                if (this.users.length === 0) {
-                    this.users = [
-                        {
-                            id: 1,
-                            username: 'warga1',
-                            password: '123456',
-                            name: 'Budi Santoso',
-                            role: 'warga',
-                            address: 'Blok A No. 15',
-                            phone: '081234567890',
-                            ktp: '3201234567890001'
-                        },
-                        {
-                            id: 2,
-                            username: 'pengurus1',
-                            password: 'admin123',
-                            name: 'Ahmad RT',
-                            role: 'pengurus',
-                            address: 'Blok B No. 3',
-                            phone: '081298765432'
-                        }
-                    ];
-                    this.save('users');
-                }
-                
-                if (this.announcements.length === 0) {
-                    this.announcements = [
-                        {
-                            id: 1,
-                            title: 'Jadwal Ronda Minggu Ini',
-                            content: 'Ronda malam hari dilaksanakan pukul 22.00 - 05.00 WIB. Mohon kerjasamanya.',
-                            date: new Date().toISOString(),
-                            priority: 'high'
-                        },
-                        {
-                            id: 2,
-                            title: 'Kerja Bakti Minggu Depan',
-                            content: 'Kerja bakti bersama diadakan hari Minggu, 30 November 2026 pukul 07.00 WIB.',
-                            date: new Date().toISOString(),
-                            priority: 'medium'
-                        }
-                    ];
-                    this.save('announcements');
-                }
-                
-                if (this.schedules.length === 0) {
-                    this.schedules = [
-                        {
-                            id: 1,
-                            type: 'ronda',
-                            title: 'Ronda Malam',
-                            time: 'Setiap Hari 22.00 - 05.00',
-                            icon: '🛡️'
-                        },
-                        {
-                            id: 2,
-                            type: 'activity',
-                            title: 'Senam Pagi',
-                            time: 'Minggu, 07.00 WIB',
-                            icon: '🤸'
-                        }
-                    ];
-                    this.save('schedules');
-                }
-            }
-        };
+    ${isAdmin?`
+    <div class="stats">
+      <div class="stat-card"><div class="stat-icon green">👥</div><div class="stat-info"><h4>${DDB.residents.length}</h4><p>Total Warga</p></div></div>
+      <div class="stat-card"><div class="stat-icon blue">💰</div><div class="stat-info"><h4>${rp(totalIncome-totalExpense)}</h4><p>Saldo Kas</p></div></div>
+      <div class="stat-card"><div class="stat-icon amber">📋</div><div class="stat-info"><h4>${DDB.complaints.filter(c=>c.status==='pending').length}</h4><p>Pengaduan Baru</p></div></div>
+      <div class="stat-card"><div class="stat-icon red">📄</div><div class="stat-info"><h4>${DDB.letters.filter(l=>l.status==='pending').length}</h4><p>Surat Menunggu</p></div></div>
+    </div>
+    `:`
+    <div class="stats">
+      <div class="stat-card"><div class="stat-icon green">💰</div><div class="stat-info"><h4>${pendingBills.length}</h4><p>Tagihan Belum Bayar</p></div></div>
+      <div class="stat-card"><div class="stat-icon blue">📝</div><div class="stat-info"><h4>${DDB.complaints.filter(c=>c.user_id===S.profile?.id).length}</h4><p>Pengaduan Saya</p></div></div>
+      <div class="stat-card"><div class="stat-icon amber">📄</div><div class="stat-info"><h4>${DDB.letters.filter(l=>l.user_id===S.profile?.id).length}</h4><p>Surat Saya</p></div></div>
+    </div>
+    `}
 
-        const STATE = {
-            currentUser: JSON.parse(localStorage.getItem('currentUser') || 'null'),
-            currentPage: 'home',
-            
-            setUser(user) {
-                this.currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(user));
-            },
-            
-            logout() {
-                this.currentUser = null;
-                localStorage.removeItem('currentUser');
-            }
-        };
+    <h3 style="margin-bottom:12px;font-size:1rem">Akses Cepat</h3>
+    <div class="quick-grid" style="margin-bottom:24px">
+      ${isAdmin?`
+        <div class="quick-card" onclick="nav('residents')"><div class="qi">👥</div><h4>Data Warga</h4><p>Kelola penduduk</p></div>
+        <div class="quick-card" onclick="nav('cashbook')"><div class="qi">💼</div><h4>Buku Kas</h4><p>Keuangan RT</p></div>
+        <div class="quick-card" onclick="nav('complaints-manage')"><div class="qi">📋</div><h4>Pengaduan</h4><p>Tindak lanjuti</p></div>
+        <div class="quick-card" onclick="nav('bills-manage')"><div class="qi">💰</div><h4>Kelola Iuran</h4><p>Verifikasi bayar</p></div>
+        <div class="quick-card" onclick="nav('schedules')"><div class="qi">📅</div><h4>Jadwal</h4><p>Kegiatan warga</p></div>
+        <div class="quick-card" onclick="nav('settings')"><div class="qi">⚙️</div><h4>Pengaturan</h4><p>General settings</p></div>
+      `:`
+        <div class="quick-card" onclick="nav('my-bills')"><div class="qi">💰</div><h4>Iuran</h4><p>Bayar tagihan</p></div>
+        <div class="quick-card" onclick="nav('my-complaints')"><div class="qi">📝</div><h4>Pengaduan</h4><p>Lapor masalah</p></div>
+        <div class="quick-card" onclick="nav('my-letters')"><div class="qi">📄</div><h4>Surat</h4><p>Ajukan surat</p></div>
+        <div class="quick-card" onclick="nav('announcements')"><div class="qi">📢</div><h4>Pengumuman</h4><p>Info terbaru</p></div>
+      `}
+    </div>
 
-        // ===== UTILS =====
-        const formatRupiah = (num) => {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(num);
-        };
+    <div class="card">
+      <div class="card-header"><h3>📢 Pengumuman Terbaru</h3></div>
+      <div class="card-body">
+        ${DDB.announcements.slice(0,3).map(a=>`
+          <div style="padding:12px;background:var(--p-bg);border-radius:10px;margin-bottom:10px;border-left:4px solid ${a.priority==='high'?'var(--danger)':'var(--p)'}">
+            <div style="font-weight:700;font-size:.85rem;margin-bottom:4px">${a.title}</div>
+            <div style="font-size:.78rem;color:var(--text2)">${a.content}</div>
+            <div style="font-size:.65rem;color:var(--text3);margin-top:6px">${fdt(a.created_at)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
 
-        const formatDate = (date) => {
-            return new Intl.DateTimeFormat('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }).format(new Date(date));
-        };
+/* ── ANNOUNCEMENTS ── */
+function pgAnnouncements(){
+  const isAdmin=S.profile?.role==='pengurus';
+  return `
+    ${isAdmin?`<div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-p" onclick="modalAddAnnouncement()">+ Tambah Pengumuman</button>
+      <button class="btn btn-o" onclick="exportData('announcements')">📥 Ekspor Excel</button>
+    </div>`:''}
+    ${DDB.announcements.map(a=>`
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-body">
+          <div style="display:flex;justify-content:space-between;align-items:start;gap:8px;margin-bottom:8px">
+            <div style="font-weight:700;font-size:.92rem">${a.title}</div>
+            <span class="badge-s ${a.priority==='high'?'badge-red':'badge-green'}">${a.priority==='high'?'Penting':'Info'}</span>
+          </div>
+          <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${a.content}</p>
+          <div style="font-size:.68rem;color:var(--text3)">${fdt(a.created_at)}</div>
+          ${isAdmin?`<div style="margin-top:10px;display:flex;gap:6px">
+            <button class="btn btn-d btn-sm" onclick="deleteAnnouncement('${a.id}')">Hapus</button>
+            <button class="btn btn-wa btn-sm" onclick="broadcastWA('${a.title}','${a.content.replace(/'/g,"\\'")}')">📲 Broadcast WA</button>
+          </div>`:''}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
 
-        const formatDateTime = (date) => {
-            return new Intl.DateTimeFormat('id-ID', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            }).format(new Date(date));
-        };
+function modalAddAnnouncement(){
+  openModal('Tambah Pengumuman',`
+    <div class="fg" style="margin-bottom:12px"><label>Judul</label><input id="mAnTitle"></div>
+    <div class="fg" style="margin-bottom:12px"><label>Isi</label><textarea id="mAnContent"></textarea></div>
+    <div class="fg"><label>Prioritas</label><select id="mAnPrio"><option value="medium">Info Biasa</option><option value="high">Penting</option></select></div>
+  `,`<button class="btn btn-p" onclick="saveAnnouncement()">Simpan</button>`);
+}
+function saveAnnouncement(){
+  const t=$('#mAnTitle').value,c=$('#mAnContent').value,p=$('#mAnPrio').value;
+  if(!t||!c)return toast('Judul dan isi wajib diisi','error');
+  DDB.add('announcements',{title:t,content:c,priority:p});
+  addLog('Pengumuman','Ditambahkan: '+t);closeModal();nav('announcements');toast('Pengumuman ditambahkan');
+}
+function deleteAnnouncement(id){if(confirm('Hapus pengumuman ini?')){DDB.remove('announcements',id);addLog('Pengumuman','Dihapus');nav('announcements');toast('Dihapus')}}
 
-        const getInitials = (name) => {
-            return name.split(' ').map(n => n[0]).join('').toUpperCase();
-        };
+function broadcastWA(title,content){
+  const msg=`📢 *${title}*\n\n${content}\n\n— Pengurus RT Palima Indah`;
+  DDB.residents.forEach(r=>{if(r.phone)waSend(r.phone,msg)});
+  toast('Broadcast WhatsApp dikirim');
+}
 
-        const uploadFile = async (file) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(file);
-            });
-        };
+/* ── MY BILLS (Warga) ── */
+function pgMyBills(){
+  const bills=DDB.bills.filter(b=>b.user_id===S.profile?.id);
+  return `
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-o" onclick="exportData('my-bills')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportBillsPDF()">📄 Ekspor PDF</button>
+    </div>
+    ${bills.map(b=>`
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-weight:700;font-size:.95rem">${b.month}</span>
+            <span class="badge-s ${b.status==='verified'?'badge-blue':b.status==='paid'?'badge-green':'badge-amber'}">
+              ${b.status==='verified'?'✓ Terverifikasi':b.status==='paid'?'⏳ Menunggu Verifikasi':'Belum Bayar'}
+            </span>
+          </div>
+          ${b.items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:6px"><span style="color:var(--text2)">${i.name}</span><span style="font-weight:600">${rp(i.amount)}</span></div>`).join('')}
+          <div style="margin-top:12px;padding-top:12px;border-top:2px dashed var(--border);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-weight:600;font-size:.85rem">Total</span>
+            <span style="font-size:1.1rem;font-weight:800;color:var(--p)">${rp(b.total)}</span>
+          </div>
+          ${b.status==='pending'?`<button class="btn btn-p" style="width:100%;justify-content:center;margin-top:14px" onclick="modalPayBill('${b.id}')">Bayar Sekarang</button>`:''}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
 
-        // ===== PRAYER TIMES =====
-        const getPrayerTimes = () => {
-            const now = new Date();
-            const hour = now.getHours();
-            
-            const times = [
-                { name: 'Subuh', time: '04:30', active: hour >= 4 && hour < 6 },
-                { name: 'Dzuhur', time: '12:00', active: hour >= 12 && hour < 15 },
-                { name: 'Ashar', time: '15:15', active: hour >= 15 && hour < 18 },
-                { name: 'Maghrib', time: '18:05', active: hour >= 18 && hour < 19 },
-                { name: 'Isya', time: '19:20', active: hour >= 19 || hour < 4 }
-            ];
-            
-            return times;
-        };
+function modalPayBill(id){
+  const b=DDB.bills.find(x=>x.id===id);
+  openModal('Upload Bukti Transfer',`
+    <div style="background:var(--p-bg);padding:14px;border-radius:10px;margin-bottom:16px;font-size:.82rem">
+      <strong>Transfer ke:</strong><br>Bank BCA • 1234567890<br>a.n. RT 05 Palima Indah<br><br>
+      <strong>Total: ${rp(b.total)}</strong>
+    </div>
+    <div class="fg" style="margin-bottom:12px">
+      <label>Bukti Transfer *</label>
+      <div class="file-drop" onclick="this.querySelector('input').click()">
+        <input type="file" id="mPayFile" accept="image/*" onchange="$('#mPayFileName').textContent=this.files[0]?.name||''">
+        <div style="font-size:2rem;margin-bottom:6px">📎</div>
+        <div style="font-size:.82rem;color:var(--text3)">Klik untuk upload gambar</div>
+        <div id="mPayFileName" style="font-size:.78rem;color:var(--p);margin-top:6px;font-weight:600"></div>
+      </div>
+    </div>
+    <div class="fg"><label>Catatan (opsional)</label><textarea id="mPayNote" rows="2"></textarea></div>
+  `,`<button class="btn btn-p" onclick="submitPayBill('${id}')">Kirim Bukti</button>`);
+}
 
-        // ===== COMPONENTS =====
-        const LoginPage = () => {
-            const handleLogin = (e) => {
-                e.preventDefault();
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                const user = DB.users.find(u => u.username === username && u.password === password);
-                
-                if (user) {
-                    STATE.setUser(user);
-                    render();
-                } else {
-                    alert('Username atau password salah!');
-                }
-            };
-            
-            return `
-                <div class="login-container">
-                    <div class="login-box">
-                        <div class="login-logo">
-                            <div class="login-logo-icon">🏘️</div>
-                            <div class="logo-text">Palima Indah</div>
-                            <div class="logo-subtext">Portal Warga Digital</div>
-                        </div>
-                        
-                        <form onsubmit="return false;" id="loginForm">
-                            <div class="form-group">
-                                <label class="form-label">Username</label>
-                                <input type="text" id="username" class="form-input" placeholder="Masukkan username" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Password</label>
-                                <input type="password" id="password" class="form-input" placeholder="Masukkan password" required>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">Masuk</button>
-                            
-                            <div style="margin-top: 20px; padding: 15px; background: var(--bg-main); border-radius: 12px; font-size: 12px; color: var(--text-medium);">
-                                <strong>Demo Login:</strong><br>
-                                Warga: warga1 / 123456<br>
-                                Pengurus: pengurus1 / admin123
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
-        };
+async function submitPayBill(id){
+  const f=$('#mPayFile');
+  if(!f.files[0])return toast('Upload bukti transfer dulu','error');
+  const proof=await toBase64(f.files[0]);
+  DDB.update('bills',id,{status:'paid',proof,paid_at:new Date().toISOString(),note:$('#mPayNote').value});
+  addLog('Iuran','Bukti dikirim untuk '+id);
+  // Notify admin via WA
+  const adminProfiles=DDB.profiles.filter(p=>p.role==='pengurus');
+  adminProfiles.forEach(a=>{if(a.phone)waSend(a.phone,`💰 *Pembayaran Iuran Baru*\nDari: ${S.profile.name}\nBulan: ${DDB.bills.find(b=>b.id===id)?.month}\n\nSilakan verifikasi di portal.`)});
+  closeModal();nav('my-bills');toast('Bukti transfer dikirim!');
+}
 
-        const Header = () => {
-            const user = STATE.currentUser;
-            const now = new Date();
-            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            const date = formatDate(now);
-            const prayerTimes = getPrayerTimes();
-            
-            return `
-                <div class="header">
-                    <div class="header-top">
-                        <div class="user-info">
-                            <div class="avatar">${getInitials(user.name)}</div>
-                            <div class="user-details">
-                                <h3>${user.name}</h3>
-                                <p>${user.role === 'warga' ? 'Warga' : 'Pengurus RT'} • ${user.address || '-'}</p>
-                            </div>
-                        </div>
-                        <button class="logout-btn" onclick="logout()">Keluar</button>
-                    </div>
-                    
-                    <div class="logo-section">
-                        <div class="logo">🏘️</div>
-                        <div class="logo-text">Palima Indah Residence</div>
-                        <div class="logo-subtext">Portal Warga Digital</div>
-                    </div>
-                    
-                    <div class="time-section">
-                        <div class="time" id="currentTime">${time}</div>
-                        <div class="date">${date}</div>
-                        
-                        <div class="prayer-times">
-                            ${prayerTimes.map(p => `
-                                <div class="prayer-item ${p.active ? 'active' : ''}">
-                                    <div class="prayer-name">${p.name}</div>
-                                    <div class="prayer-time">${p.time}</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        };
+function exportBillsPDF(){
+  const bills=DDB.bills.filter(b=>b.user_id===S.profile?.id);
+  const cols=['Bulan','Total','Status'];
+  const rows=bills.map(b=>[b.month,rp(b.total),b.status]);
+  exportPDF(cols,rows,`Riwayat Iuran — ${S.profile.name}`,'iuran-saya');
+}
 
-        const Announcements = () => {
-            return `
-                <div class="announcements">
-                    <div class="section-title">📢 Pengumuman Terkini</div>
-                    ${DB.announcements.map(a => `
-                        <div class="announcement-item">
-                            <div class="announcement-title">${a.title}</div>
-                            <div class="announcement-text">${a.content}</div>
-                            <div class="announcement-time">${formatDateTime(a.date)}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        };
+/* ── MY COMPLAINTS (Warga) ── */
+function pgMyComplaints(){
+  const list=DDB.complaints.filter(c=>c.user_id===S.profile?.id);
+  return `
+    <button class="btn btn-p" style="margin-bottom:16px" onclick="modalAddComplaint()">+ Buat Pengaduan Baru</button>
+    ${!list.length?'<div style="text-align:center;padding:40px;color:var(--text3)"><div style="font-size:3rem;margin-bottom:8px">📝</div>Belum ada pengaduan</div>':''}
+    ${list.map(c=>`
+      <div class="card" style="margin-bottom:12px"><div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:700;font-size:.88rem">${c.title}</span>
+          <span class="badge-s ${c.status==='resolved'?'badge-blue':c.status==='inprogress'?'badge-green':'badge-amber'}">
+            ${c.status==='resolved'?'✓ Selesai':c.status==='inprogress'?'Diproses':'Menunggu'}
+          </span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${c.description}</p>
+        ${c.image?`<img src="${c.image}" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-bottom:8px" alt="Foto">`:''}
+        <div style="font-size:.68rem;color:var(--text3)">${fdt(c.created_at)}</div>
+        ${c.response?`<div style="margin-top:10px;padding:12px;background:var(--p-bg);border-radius:10px;font-size:.8rem"><strong>Tanggapan RT:</strong><br>${c.response}</div>`:''}
+      </div></div>
+    `).join('')}
+  `;
+}
 
-        const MenuGrid = () => {
-            const user = STATE.currentUser;
-            const isWarga = user.role === 'warga';
-            
-            const menus = isWarga ? [
-                { id: 'bills', icon: '💰', title: 'Pembayaran Iuran', desc: 'Tagihan & riwayat' },
-                { id: 'complaints', icon: '📝', title: 'Pengaduan', desc: 'Laporkan masalah', badge: 2 },
-                { id: 'letters', icon: '📄', title: 'Pengajuan Surat', desc: 'Buat surat RT' },
-                { id: 'profile', icon: '👤', title: 'Data Pribadi', desc: 'Lihat profil' }
-            ] : [
-                { id: 'residents', icon: '👥', title: 'Data Warga', desc: 'Kelola penduduk' },
-                { id: 'cashbook', icon: '💼', title: 'Buku Kas RT', desc: 'Laporan keuangan' },
-                { id: 'cctv', icon: '📹', title: 'Akses CCTV', desc: 'Pantau keamanan' },
-                { id: 'verify', icon: '✅', title: 'Verifikasi', desc: 'Iuran & pengajuan', badge: 5 }
-            ];
-            
-            return `
-                <div class="menu-grid">
-                    ${menus.map(m => `
-                        <div class="menu-card" onclick="navigateTo('${m.id}')">
-                            ${m.badge ? `<div class="badge">${m.badge}</div>` : ''}
-                            <div class="menu-icon">${m.icon}</div>
-                            <div class="menu-title">${m.title}</div>
-                            <div class="menu-desc">${m.desc}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        };
+function modalAddComplaint(){
+  openModal('Buat Pengaduan',`
+    <div class="fg" style="margin-bottom:12px"><label>Judul *</label><input id="mCpTitle" placeholder="Contoh: Lampu jalan mati"></div>
+    <div class="fg" style="margin-bottom:12px"><label>Deskripsi *</label><textarea id="mCpDesc" placeholder="Jelaskan masalah secara detail..."></textarea></div>
+    <div class="fg">
+      <label>Foto (opsional)</label>
+      <div class="file-drop" onclick="this.querySelector('input').click()">
+        <input type="file" id="mCpFile" accept="image/*" onchange="$('#mCpFn').textContent=this.files[0]?.name||''">
+        <div style="font-size:2rem;margin-bottom:4px">📷</div>
+        <div style="font-size:.8rem;color:var(--text3)">Upload foto pendukung</div>
+        <div id="mCpFn" style="font-size:.78rem;color:var(--p);margin-top:4px;font-weight:600"></div>
+      </div>
+    </div>
+  `,`<button class="btn btn-p" onclick="saveComplaint()">Kirim Pengaduan</button>`);
+}
 
-        const Schedules = () => {
-            return `
-                <div class="schedule-section">
-                    <div class="section-title">📅 Jadwal Kegiatan</div>
-                    ${DB.schedules.map(s => `
-                        <div class="schedule-item">
-                            <div class="schedule-icon">${s.icon}</div>
-                            <div class="schedule-details">
-                                <div class="schedule-title">${s.title}</div>
-                                <div class="schedule-time">${s.time}</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        };
+async function saveComplaint(){
+  const t=$('#mCpTitle').value,d=$('#mCpDesc').value;
+  if(!t||!d)return toast('Judul dan deskripsi wajib diisi','error');
+  let img=null;const f=$('#mCpFile');if(f.files[0])img=await toBase64(f.files[0]);
+  DDB.add('complaints',{user_id:S.profile.id,user_name:S.profile.name,phone:S.profile.phone,title:t,description:d,image:img,status:'pending'});
+  addLog('Pengaduan','Baru: '+t);
+  const admins=DDB.profiles.filter(p=>p.role==='pengurus');
+  admins.forEach(a=>{if(a.phone)waSend(a.phone,`📝 *Pengaduan Baru*\nDari: ${S.profile.name}\nJudul: ${t}\n\n${d}`)});
+  closeModal();nav('my-complaints');toast('Pengaduan dikirim!');
+}
 
-        const BottomNav = () => {
-            const items = [
-                { id: 'home', icon: '🏠', label: 'Beranda' },
-                { id: 'activity', icon: '📋', label: 'Aktivitas' },
-                { id: 'info', icon: 'ℹ️', label: 'Info' }
-            ];
-            
-            return `
-                <div class="bottom-nav">
-                    ${items.map(item => `
-                        <div class="nav-item ${STATE.currentPage === item.id ? 'active' : ''}" onclick="navigateTo('${item.id}')">
-                            <div class="nav-icon">${item.icon}</div>
-                            <div class="nav-label">${item.label}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        };
+/* ── MY LETTERS (Warga) ── */
+function pgMyLetters(){
+  const list=DDB.letters.filter(l=>l.user_id===S.profile?.id);
+  return `
+    <button class="btn btn-p" style="margin-bottom:16px" onclick="modalAddLetter()">+ Ajukan Surat Baru</button>
+    ${!list.length?'<div style="text-align:center;padding:40px;color:var(--text3)"><div style="font-size:3rem;margin-bottom:8px">📄</div>Belum ada pengajuan surat</div>':''}
+    ${list.map(l=>`
+      <div class="card" style="margin-bottom:12px"><div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:700;font-size:.88rem">${l.type}</span>
+          <span class="badge-s ${l.status==='approved'?'badge-blue':l.status==='inreview'?'badge-green':'badge-amber'}">
+            ${l.status==='approved'?'✓ Disetujui':l.status==='inreview'?'Ditinjau':'Menunggu'}
+          </span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text2)"><strong>Keperluan:</strong> ${l.purpose}</p>
+        <div style="font-size:.68rem;color:var(--text3);margin-top:6px">${fdt(l.created_at)}</div>
+      </div></div>
+    `).join('')}
+  `;
+}
 
-        // ===== PAGES =====
-        const HomePage = () => {
-            return `
-                ${Header()}
-                ${Announcements()}
-                ${MenuGrid()}
-                ${Schedules()}
-                ${BottomNav()}
-            `;
-        };
+function modalAddLetter(){
+  const types=['Surat Keterangan Domisili','Surat Pengantar KTP','Surat Pengantar KK','Surat Keterangan Tidak Mampu','Surat Keterangan Usaha','Surat Pengantar Nikah','Surat Keterangan Belum Menikah'];
+  openModal('Ajukan Surat Baru',`
+    <div class="fg" style="margin-bottom:12px"><label>Jenis Surat *</label><select id="mLtType"><option value="">Pilih...</option>${types.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>
+    <div class="fg" style="margin-bottom:12px"><label>Keperluan *</label><textarea id="mLtPurpose" placeholder="Jelaskan keperluan surat..."></textarea></div>
+    <div class="fg">
+      <label>Dokumen Pendukung</label>
+      <div class="file-drop" onclick="this.querySelector('input').click()">
+        <input type="file" id="mLtFiles" multiple accept="image/*,.pdf" onchange="$('#mLtFn').textContent=this.files.length+' file dipilih'">
+        <div style="font-size:2rem;margin-bottom:4px">📎</div>
+        <div style="font-size:.8rem;color:var(--text3)">KTP, KK, atau dokumen lain</div>
+        <div id="mLtFn" style="font-size:.78rem;color:var(--p);margin-top:4px;font-weight:600"></div>
+      </div>
+    </div>
+  `,`<button class="btn btn-p" onclick="saveLetter()">Ajukan Surat</button>`);
+}
 
-        const BillsPage = () => {
-            const userId = STATE.currentUser.id;
-            let userBills = DB.bills.filter(b => b.userId === userId);
-            
-            // Generate demo bills if none exist
-            if (userBills.length === 0) {
-                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'];
-                months.forEach((month, idx) => {
-                    DB.bills.push({
-                        id: Date.now() + idx,
-                        userId: userId,
-                        month: month + ' 2026',
-                        items: [
-                            { name: 'Iuran Keamanan', amount: 100000 },
-                            { name: 'Iuran Kebersihan', amount: 50000 },
-                            { name: 'Iuran Listrik Jalan', amount: 25000 }
-                        ],
-                        total: 175000,
-                        status: idx < 2 ? 'verified' : idx === 2 ? 'paid' : 'pending',
-                        proof: idx < 3 ? 'uploaded' : null,
-                        paidDate: idx < 3 ? new Date().toISOString() : null
-                    });
-                });
-                DB.save('bills');
-                userBills = DB.bills.filter(b => b.userId === userId);
-            }
-            
-            return `
-                <div class="container">
-                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
-                        <h2 class="modal-title">💰 Pembayaran Iuran</h2>
-                        <button class="close-btn" onclick="navigateTo('home')">×</button>
-                    </div>
-                    
-                    ${userBills.map(bill => `
-                        <div class="bill-card">
-                            <div class="bill-header">
-                                <div class="bill-month">${bill.month}</div>
-                                <div class="bill-status ${
-                                    bill.status === 'verified' ? 'status-verified' : 
-                                    bill.status === 'paid' ? 'status-paid' : 
-                                    'status-pending'
-                                }">
-                                    ${
-                                        bill.status === 'verified' ? '✓ Terverifikasi' : 
-                                        bill.status === 'paid' ? '⏳ Menunggu Verifikasi' : 
-                                        'Belum Dibayar'
-                                    }
-                                </div>
-                            </div>
-                            
-                            ${bill.items.map(item => `
-                                <div class="bill-detail">
-                                    <span class="bill-label">${item.name}</span>
-                                    <span class="bill-value">${formatRupiah(item.amount)}</span>
-                                </div>
-                            `).join('')}
-                            
-                            <div class="bill-total">
-                                <span class="bill-total-label">Total Tagihan</span>
-                                <span class="bill-total-value">${formatRupiah(bill.total)}</span>
-                            </div>
-                            
-                            ${bill.status === 'pending' ? `
-                                <button class="btn btn-primary" style="margin-top: 15px;" onclick="showPaymentModal(${bill.id})">
-                                    Bayar Sekarang
-                                </button>
-                            ` : bill.proof ? `
-                                <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 10px; font-size: 12px; color: var(--text-medium);">
-                                    📎 Bukti transfer telah diunggah<br>
-                                    ${bill.paidDate ? formatDateTime(bill.paidDate) : ''}
-                                </div>
-                            ` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-                ${BottomNav()}
-            `;
-        };
+async function saveLetter(){
+  const type=$('#mLtType').value,purpose=$('#mLtPurpose').value;
+  if(!type||!purpose)return toast('Jenis surat dan keperluan wajib diisi','error');
+  DDB.add('letters',{user_id:S.profile.id,user_name:S.profile.name,phone:S.profile.phone,type,purpose,status:'pending'});
+  addLog('Surat','Pengajuan: '+type);
+  const admins=DDB.profiles.filter(p=>p.role==='pengurus');
+  admins.forEach(a=>{if(a.phone)waSend(a.phone,`📄 *Pengajuan Surat Baru*\nDari: ${S.profile.name}\nJenis: ${type}\nKeperluan: ${purpose}`)});
+  closeModal();nav('my-letters');toast('Surat diajukan!');
+}
 
-        const ComplaintsPage = () => {
-            const userId = STATE.currentUser.id;
-            const userComplaints = DB.complaints.filter(c => c.userId === userId);
-            
-            return `
-                <div class="container">
-                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
-                        <h2 class="modal-title">📝 Pengaduan Warga</h2>
-                        <button class="close-btn" onclick="navigateTo('home')">×</button>
-                    </div>
-                    
-                    <button class="btn btn-primary" style="margin-bottom: 20px;" onclick="showComplaintModal()">
-                        + Buat Pengaduan Baru
-                    </button>
-                    
-                    ${userComplaints.length === 0 ? `
-                        <div class="empty-state">
-                            <div class="empty-icon">📝</div>
-                            <div class="empty-text">Belum ada pengaduan</div>
-                        </div>
-                    ` : userComplaints.map(c => `
-                        <div class="complaint-card">
-                            <div class="card-header">
-                                <div class="card-title">${c.title}</div>
-                                <div class="bill-status ${
-                                    c.status === 'resolved' ? 'status-verified' : 
-                                    c.status === 'inprogress' ? 'status-paid' : 
-                                    'status-pending'
-                                }">
-                                    ${
-                                        c.status === 'resolved' ? '✓ Selesai' : 
-                                        c.status === 'inprogress' ? '⚙️ Diproses' : 
-                                        '⏳ Menunggu'
-                                    }
-                                </div>
-                            </div>
-                            <div class="card-content">${c.description}</div>
-                            ${c.image ? `<img src="${c.image}" class="card-image" alt="Foto pengaduan">` : ''}
-                            <div class="card-date">Dibuat: ${formatDateTime(c.date)}</div>
-                            ${c.response ? `
-                                <div style="margin-top: 10px; padding: 12px; background: var(--bg-main); border-radius: 10px; font-size: 12px;">
-                                    <strong>Tanggapan RT:</strong><br>${c.response}
-                                </div>
-                            ` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-                ${BottomNav()}
-            `;
-        };
+/* ═══════════════════════════════════════
+   ADMIN PAGES
+   ═══════════════════════════════════════ */
 
-        const LettersPage = () => {
-            const userId = STATE.currentUser.id;
-            const userLetters = DB.letters.filter(l => l.userId === userId);
-            
-            return `
-                <div class="container">
-                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
-                        <h2 class="modal-title">📄 Pengajuan Surat</h2>
-                        <button class="close-btn" onclick="navigateTo('home')">×</button>
-                    </div>
-                    
-                    <button class="btn btn-primary" style="margin-bottom: 20px;" onclick="showLetterModal()">
-                        + Ajukan Surat Baru
-                    </button>
-                    
-                    ${userLetters.length === 0 ? `
-                        <div class="empty-state">
-                            <div class="empty-icon">📄</div>
-                            <div class="empty-text">Belum ada pengajuan surat</div>
-                        </div>
-                    ` : userLetters.map(l => `
-                        <div class="letter-card">
-                            <div class="card-header">
-                                <div class="card-title">${l.type}</div>
-                                <div class="bill-status ${
-                                    l.status === 'approved' ? 'status-verified' : 
-                                    l.status === 'inreview' ? 'status-paid' : 
-                                    'status-pending'
-                                }">
-                                    ${
-                                        l.status === 'approved' ? '✓ Disetujui' : 
-                                        l.status === 'inreview' ? '👁️ Ditinjau' : 
-                                        '⏳ Menunggu'
-                                    }
-                                </div>
-                            </div>
-                            <div class="card-content">
-                                <strong>Keperluan:</strong> ${l.purpose}<br>
-                                ${l.documents ? `<strong>Dokumen:</strong> ${l.documents.length} file` : ''}
-                            </div>
-                            <div class="card-date">Diajukan: ${formatDateTime(l.date)}</div>
-                        </div>
-                    `).join('')}
-                </div>
-                ${BottomNav()}
-            `;
-        };
+/* ── RESIDENTS ── */
+function pgResidents(){
+  return `
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-p" onclick="modalAddResident()">+ Tambah Warga</button>
+      <button class="btn btn-o" onclick="exportData('residents')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportResidentsPDF()">📄 Ekspor PDF</button>
+      <button class="btn btn-o" onclick="triggerImport('residents')">📤 Impor Excel</button>
+    </div>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="handleImport(this)">
+    <div class="fg" style="margin-bottom:16px"><input placeholder="🔍 Cari nama, alamat, KTP..." oninput="filterResidents(this.value)"></div>
+    <div class="card"><div class="card-body np"><div class="tbl-wrap">
+      <table id="residentsTable">
+        <thead><tr><th>Nama</th><th>Alamat</th><th>No. HP / WA</th><th>KTP</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>${DDB.residents.map(r=>residentRow(r)).join('')}</tbody>
+      </table>
+    </div></div></div>
+  `;
+}
 
-        const ResidentsPage = () => {
-            if (STATE.currentUser.role !== 'pengurus') {
-                return `<div class="container"><div class="empty-state"><div class="empty-icon">🚫</div><div class="empty-text">Akses ditolak</div></div></div>`;
-            }
-            
-            // Generate demo residents
-            if (DB.residents.length === 0) {
-                for (let i = 1; i <= 10; i++) {
-                    DB.residents.push({
-                        id: i,
-                        name: `Warga ${i}`,
-                        address: `Blok ${String.fromCharCode(65 + (i % 5))} No. ${i}`,
-                        phone: `08123456${1000 + i}`,
-                        ktp: `320123456789000${i}`,
-                        verified: i <= 7
-                    });
-                }
-                DB.save('residents');
-            }
-            
-            return `
-                <div class="container">
-                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
-                        <h2 class="modal-title">👥 Data Warga</h2>
-                        <button class="close-btn" onclick="navigateTo('home')">×</button>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="🔍 Cari nama, alamat, atau KTP..." id="residentSearch" oninput="searchResidents()">
-                    </div>
-                    
-                    <div id="residentList">
-                        ${DB.residents.map(r => `
-                            <div class="resident-card">
-                                <div class="card-header">
-                                    <div class="card-title">${r.name}</div>
-                                    <div class="bill-status ${r.verified ? 'status-verified' : 'status-pending'}">
-                                        ${r.verified ? '✓ Terverifikasi' : '⏳ Belum'}
-                                    </div>
-                                </div>
-                                <div class="card-content">
-                                    📍 ${r.address}<br>
-                                    📱 ${r.phone}<br>
-                                    🆔 ${r.ktp}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                ${BottomNav()}
-            `;
-        };
+function residentRow(r){
+  return `<tr>
+    <td style="font-weight:600">${r.name}</td><td>${r.address}</td>
+    <td>${r.phone||'-'} ${r.phone?`<button class="btn btn-wa btn-sm" style="padding:3px 8px;font-size:.65rem;margin-left:4px" onclick="waOpen('${r.phone}','Halo ${r.name}, ')">💬</button>`:''}</td>
+    <td style="font-size:.75rem">${r.ktp||'-'}</td>
+    <td><span class="badge-s ${r.verified?'badge-green':'badge-amber'}">${r.verified?'Terverifikasi':'Belum'}</span></td>
+    <td><div style="display:flex;gap:4px">
+      ${!r.verified?`<button class="btn btn-p btn-sm" onclick="verifyResident('${r.id}')">✓</button>`:''}
+      <button class="btn btn-d btn-sm" onclick="deleteResident('${r.id}')">🗑</button>
+    </div></td>
+  </tr>`;
+}
 
-        const CashbookPage = () => {
-            if (STATE.currentUser.role !== 'pengurus') {
-                return `<div class="container"><div class="empty-state"><div class="empty-icon">🚫</div><div class="empty-text">Akses ditolak</div></div></div>`;
-            }
-            
-            // Generate demo transactions
-            if (DB.transactions.length === 0) {
-                DB.transactions = [
-                    { id: 1, type: 'income', title: 'Iuran Warga - Januari', amount: 5250000, date: new Date('2026-01-15').toISOString() },
-                    { id: 2, type: 'expense', title: 'Pembayaran Satpam', amount: 2000000, date: new Date('2026-01-20').toISOString() },
-                    { id: 3, type: 'expense', title: 'Perawatan Taman', amount: 500000, date: new Date('2026-02-05').toISOString() },
-                    { id: 4, type: 'income', title: 'Iuran Warga - Februari', amount: 5425000, date: new Date('2026-02-15').toISOString() },
-                    { id: 5, type: 'expense', title: 'Listrik Area Umum', amount: 350000, date: new Date('2026-02-25').toISOString() }
-                ];
-                DB.save('transactions');
-            }
-            
-            const totalIncome = DB.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-            const totalExpense = DB.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-            const balance = totalIncome - totalExpense;
-            
-            return `
-                <div class="container">
-                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
-                        <h2 class="modal-title">💼 Buku Kas RT</h2>
-                        <button class="close-btn" onclick="navigateTo('home')">×</button>
-                    </div>
-                    
-                    <div class="cashbook-summary">
-                        <div class="summary-card">
-                            <div class="summary-label">Saldo</div>
-                            <div class="summary-value" style="color: var(--primary-dark);">${formatRupiah(balance).replace('Rp', '')}</div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-label">Pemasukan</div>
-                            <div class="summary-value" style="color: var(--primary-dark);">+${formatRupiah(totalIncome).replace('Rp', '')}</div>
-                        </div>
-                        <div class="summary-card">
-                            <div class="summary-label">Pengeluaran</div>
-                            <div class="summary-value" style="color: var(--danger);">-${formatRupiah(totalExpense).replace('Rp', '')}</div>
-                        </div>
-                    </div>
-                    
-                    <button class="btn btn-primary" style="margin-bottom: 20px;" onclick="showTransactionModal()">
-                        + Catat Transaksi
-                    </button>
-                    
-                    <div style="background: white; border-radius: 20px; padding: 20px;">
-                        <div class="section-title">📊 Riwayat Transaksi</div>
-                        ${DB.transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `
-                            <div class="transaction-item">
-                                <div class="transaction-info">
-                                    <div class="transaction-title">${t.title}</div>
-                                    <div class="transaction-date">${formatDateTime(t.date)}</div>
-                                </div>
-                                <div class="transaction-amount ${t.type}">
-                                    ${t.type === 'income' ? '+' : '-'}${formatRupiah(t.amount)}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-                ${BottomNav()}
-            `;
-        };
+function filterResidents(q){
+  q=q.toLowerCase();
+  const f=DDB.residents.filter(r=>(r.name+r.address+r.ktp+r.phone).toLowerCase().includes(q));
+  document.querySelector('#residentsTable tbody').innerHTML=f.map(r=>residentRow(r)).join('');
+}
 
-        const CCTVPage = () => {
-            if (STATE.currentUser.role !== 'pengurus') {
-                return `<div class="container"><div class="empty-state"><div class="empty-icon">🚫</div><div class="empty-text">Akses ditolak</div></div></div>`;
-            }
-            
-            return `
-                <div class="container">
-                    <div class="modal-header" style="background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px;">
-                        <h2 class="modal-title">📹 Akses CCTV</h2>
-                        <button class="close-btn" onclick="navigateTo('home')">×</button>
-                    </div>
-                    
-                    <div style="background: white; border-radius: 20px; padding: 30px; text-align: center;">
-                        <div style="font-size: 64px; margin-bottom: 20px;">📹</div>
-                        <h3 style="margin-bottom: 10px; color: var(--text-dark);">Akses Dashboard CCTV</h3>
-                        <p style="color: var(--text-medium); margin-bottom: 25px;">Silakan masukkan URL dashboard CCTV yang sudah terpasang di lingkungan Palima Indah.</p>
-                        
-                        <div class="form-group">
-                            <input type="url" id="cctvUrl" class="form-input" placeholder="https://contoh.com/cctv-dashboard" value="https://your-cctv-system.com">
-                        </div>
-                        
-                        <button class="btn btn-primary" onclick="openCCTV()">
-                            🔗 Buka Dashboard CCTV
-                        </button>
-                        
-                        <div style="margin-top: 20px; padding: 15px; background: var(--bg-main); border-radius: 12px; font-size: 12px; color: var(--text-medium); text-align: left;">
-                            <strong>Catatan:</strong><br>
-                            • Pastikan Anda sudah memiliki akses ke sistem CCTV<br>
-                            • Hubungi administrator jika URL atau akses bermasalah<br>
-                            • Dashboard akan dibuka di tab baru browser
-                        </div>
-                    </div>
-                </div>
-                ${BottomNav()}
-            `;
-        };
+function modalAddResident(){
+  openModal('Tambah Warga',`
+    <div class="form-grid">
+      <div class="fg"><label>Nama Lengkap *</label><input id="mRName"></div>
+      <div class="fg"><label>Alamat *</label><input id="mRAddr"></div>
+      <div class="fg"><label>No. WhatsApp *</label><input id="mRPhone" placeholder="6281234567890"></div>
+      <div class="fg"><label>No. KTP</label><input id="mRKtp"></div>
+    </div>
+  `,`<button class="btn btn-p" onclick="saveResident()">Simpan</button>`);
+}
 
-        // ===== MODALS =====
-        const showModal = (content) => {
-            const modal = document.createElement('div');
-            modal.className = 'modal show';
-            modal.innerHTML = `<div class="modal-content">${content}</div>`;
-            modal.onclick = (e) => {
-                if (e.target === modal) closeModal();
-            };
-            document.body.appendChild(modal);
-        };
+function saveResident(){
+  const n=$('#mRName').value,a=$('#mRAddr').value,p=$('#mRPhone').value;
+  if(!n||!a||!p)return toast('Nama, alamat, dan WA wajib diisi','error');
+  DDB.add('residents',{name:n,address:a,phone:p,ktp:$('#mRKtp').value,verified:false});
+  addLog('Warga','Ditambahkan: '+n);closeModal();nav('residents');toast('Warga ditambahkan');
+}
+function verifyResident(id){DDB.update('residents',id,{verified:true});addLog('Warga','Diverifikasi: '+id);nav('residents');toast('Warga diverifikasi')}
+function deleteResident(id){if(confirm('Hapus data warga ini?')){DDB.remove('residents',id);addLog('Warga','Dihapus: '+id);nav('residents');toast('Dihapus')}}
 
-        const closeModal = () => {
-            const modal = document.querySelector('.modal');
-            if (modal) modal.remove();
-        };
+function exportResidentsPDF(){
+  const cols=['Nama','Alamat','No. HP','KTP','Status'];
+  const rows=DDB.residents.map(r=>[r.name,r.address,r.phone||'-',r.ktp||'-',r.verified?'Terverifikasi':'Belum']);
+  exportPDF(cols,rows,'Data Warga Palima Indah','data-warga');
+}
 
-        window.showPaymentModal = (billId) => {
-            const bill = DB.bills.find(b => b.id === billId);
-            
-            const content = `
-                <div class="modal-header">
-                    <h2 class="modal-title">Upload Bukti Transfer</h2>
-                    <button class="close-btn" onclick="closeModal()">×</button>
-                </div>
-                
-                <div class="bill-detail" style="margin-bottom: 20px;">
-                    <span class="bill-label">Total Tagihan</span>
-                    <span style="font-size: 24px; font-weight: 700; color: var(--primary-dark);">${formatRupiah(bill.total)}</span>
-                </div>
-                
-                <div style="background: var(--bg-main); padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 13px;">
-                    <strong>Transfer ke:</strong><br>
-                    Bank BCA<br>
-                    No. Rek: 1234567890<br>
-                    a.n. RT 05 Palima Indah
-                </div>
-                
-                <form id="paymentForm">
-                    <div class="form-group">
-                        <label class="form-label">Upload Bukti Transfer *</label>
-                        <div class="file-upload" onclick="document.getElementById('proofFile').click()">
-                            <input type="file" id="proofFile" accept="image/*" onchange="previewFile(this, 'proofPreview')">
-                            <div class="file-upload-icon">📎</div>
-                            <div class="file-upload-text">Klik untuk upload gambar</div>
-                        </div>
-                        <div id="proofPreview"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Catatan (Opsional)</label>
-                        <textarea id="paymentNote" class="form-textarea" placeholder="Tambahkan catatan jika ada..."></textarea>
-                    </div>
-                    
-                    <button type="button" class="btn btn-primary" onclick="submitPayment(${billId})">
-                        Kirim Bukti Transfer
-                    </button>
-                </form>
-            `;
-            
-            showModal(content);
-        };
+/* ── BILLS MANAGE (Admin) ── */
+function pgBillsManage(){
+  return `
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-p" onclick="modalCreateBill()">+ Buat Tagihan</button>
+      <button class="btn btn-o" onclick="exportData('bills')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportAllBillsPDF()">📄 Ekspor PDF</button>
+    </div>
+    <div class="card"><div class="card-body np"><div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Warga</th><th>Bulan</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>${DDB.bills.map(b=>{
+          const u=DDB.profiles.find(p=>p.id===b.user_id);
+          return `<tr>
+            <td style="font-weight:600">${u?.name||'-'}</td><td>${b.month}</td><td>${rp(b.total)}</td>
+            <td><span class="badge-s ${b.status==='verified'?'badge-blue':b.status==='paid'?'badge-green':'badge-amber'}">${b.status==='verified'?'Verified':b.status==='paid'?'Bayar':'Belum'}</span></td>
+            <td><div style="display:flex;gap:4px;flex-wrap:wrap">
+              ${b.status==='paid'?`<button class="btn btn-p btn-sm" onclick="verifyBill('${b.id}')">✓ Verifikasi</button>`:''}
+              ${b.proof?`<button class="btn btn-o btn-sm" onclick="viewProof('${b.id}')">👁 Bukti</button>`:''}
+              ${u?.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen('${u.phone}','Halo ${u?.name}, mengenai iuran bulan ${b.month}: ')">💬</button>`:''}
+            </div></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div></div></div>
+  `;
+}
 
-        window.submitPayment = async (billId) => {
-            const fileInput = document.getElementById('proofFile');
-            const note = document.getElementById('paymentNote').value;
-            
-            if (!fileInput.files[0]) {
-                alert('Silakan upload bukti transfer terlebih dahulu');
-                return;
-            }
-            
-            const proof = await uploadFile(fileInput.files[0]);
-            
-            const bill = DB.bills.find(b => b.id === billId);
-            bill.status = 'paid';
-            bill.proof = proof;
-            bill.note = note;
-            bill.paidDate = new Date().toISOString();
-            
-            DB.save('bills');
-            closeModal();
-            navigateTo('bills');
-            alert('Bukti transfer berhasil dikirim! Menunggu verifikasi pengurus.');
-        };
+function modalCreateBill(){
+  const wargas=DDB.profiles.filter(p=>p.role==='warga');
+  openModal('Buat Tagihan Baru',`
+    <div class="form-grid">
+      <div class="fg"><label>Warga *</label><select id="mBUser"><option value="all">Semua Warga</option>${wargas.map(w=>`<option value="${w.id}">${w.name}</option>`).join('')}</select></div>
+      <div class="fg"><label>Bulan *</label><input id="mBMonth" placeholder="Desember 2026"></div>
+    </div>
+    <div style="margin-top:12px"><label style="font-size:.78rem;font-weight:600">Item Tagihan</label>
+      <div id="mBItems">
+        <div class="form-grid" style="margin-top:8px"><div class="fg"><input placeholder="Nama item" value="Iuran Keamanan"></div><div class="fg"><input type="number" placeholder="Jumlah" value="100000"></div></div>
+        <div class="form-grid" style="margin-top:8px"><div class="fg"><input placeholder="Nama item" value="Iuran Kebersihan"></div><div class="fg"><input type="number" placeholder="Jumlah" value="50000"></div></div>
+        <div class="form-grid" style="margin-top:8px"><div class="fg"><input placeholder="Nama item" value="Iuran Listrik Jalan"></div><div class="fg"><input type="number" placeholder="Jumlah" value="25000"></div></div>
+      </div>
+    </div>
+  `,`<button class="btn btn-p" onclick="saveBill()">Buat Tagihan</button>`);
+}
 
-        window.showComplaintModal = () => {
-            const content = `
-                <div class="modal-header">
-                    <h2 class="modal-title">Buat Pengaduan Baru</h2>
-                    <button class="close-btn" onclick="closeModal()">×</button>
-                </div>
-                
-                <form id="complaintForm">
-                    <div class="form-group">
-                        <label class="form-label">Judul Pengaduan *</label>
-                        <input type="text" id="complaintTitle" class="form-input" placeholder="Contoh: Lampu jalan mati" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Deskripsi Lengkap *</label>
-                        <textarea id="complaintDesc" class="form-textarea" placeholder="Jelaskan masalah secara detail..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Foto Pendukung (Opsional)</label>
-                        <div class="file-upload" onclick="document.getElementById('complaintImage').click()">
-                            <input type="file" id="complaintImage" accept="image/*" onchange="previewFile(this, 'imagePreview')">
-                            <div class="file-upload-icon">📷</div>
-                            <div class="file-upload-text">Upload foto jika ada</div>
-                        </div>
-                        <div id="imagePreview"></div>
-                    </div>
-                    
-                    <button type="button" class="btn btn-primary" onclick="submitComplaint()">
-                        Kirim Pengaduan
-                    </button>
-                </form>
-            `;
-            
-            showModal(content);
-        };
+function saveBill(){
+  const userId=$('#mBUser').value,month=$('#mBMonth').value;
+  if(!month)return toast('Bulan wajib diisi','error');
+  const itemDivs=$$('#mBItems .form-grid');
+  const items=[];
+  itemDivs.forEach(d=>{const ins=d.querySelectorAll('input');if(ins[0].value&&ins[1].value)items.push({name:ins[0].value,amount:parseInt(ins[1].value)})});
+  const total=items.reduce((s,i)=>s+i.amount,0);
 
-        window.submitComplaint = async () => {
-            const title = document.getElementById('complaintTitle').value;
-            const desc = document.getElementById('complaintDesc').value;
-            const imageInput = document.getElementById('complaintImage');
-            
-            if (!title || !desc) {
-                alert('Judul dan deskripsi harus diisi');
-                return;
-            }
-            
-            let image = null;
-            if (imageInput.files[0]) {
-                image = await uploadFile(imageInput.files[0]);
-            }
-            
-            DB.complaints.push({
-                id: Date.now(),
-                userId: STATE.currentUser.id,
-                title,
-                description: desc,
-                image,
-                status: 'pending',
-                date: new Date().toISOString()
-            });
-            
-            DB.save('complaints');
-            closeModal();
-            navigateTo('complaints');
-            alert('Pengaduan berhasil dikirim!');
-        };
+  const targets=userId==='all'?DDB.profiles.filter(p=>p.role==='warga'):[DDB.profiles.find(p=>p.id===userId)].filter(Boolean);
+  targets.forEach(t=>{
+    DDB.add('bills',{user_id:t.id,month,items,total,status:'pending'});
+    if(t.phone)waSend(t.phone,`💰 *Tagihan Iuran ${month}*\nTotal: ${rp(total)}\n\nSilakan bayar dan upload bukti transfer di portal.\n\n— Pengurus RT Palima Indah`);
+  });
+  addLog('Iuran','Tagihan dibuat: '+month);closeModal();nav('bills-manage');toast(`Tagihan ${month} dibuat untuk ${targets.length} warga`);
+}
 
-        window.showLetterModal = () => {
-            const letterTypes = [
-                'Surat Keterangan Domisili',
-                'Surat Pengantar KTP',
-                'Surat Pengantar KK',
-                'Surat Keterangan Tidak Mampu',
-                'Surat Keterangan Usaha',
-                'Surat Pengantar Nikah'
-            ];
-            
-            const content = `
-                <div class="modal-header">
-                    <h2 class="modal-title">Ajukan Surat Baru</h2>
-                    <button class="close-btn" onclick="closeModal()">×</button>
-                </div>
-                
-                <form id="letterForm">
-                    <div class="form-group">
-                        <label class="form-label">Jenis Surat *</label>
-                        <select id="letterType" class="form-select" required>
-                            <option value="">Pilih jenis surat...</option>
-                            ${letterTypes.map(t => `<option value="${t}">${t}</option>`).join('')}
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Keperluan *</label>
-                        <textarea id="letterPurpose" class="form-textarea" placeholder="Jelaskan keperluan surat..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Dokumen Pendukung</label>
-                        <div class="file-upload" onclick="document.getElementById('letterDocs').click()">
-                            <input type="file" id="letterDocs" multiple accept="image/*,.pdf" onchange="previewFiles(this, 'docsPreview')">
-                            <div class="file-upload-icon">📎</div>
-                            <div class="file-upload-text">Upload KTP, KK, atau dokumen lain</div>
-                        </div>
-                        <div id="docsPreview"></div>
-                    </div>
-                    
-                    <button type="button" class="btn btn-primary" onclick="submitLetter()">
-                        Ajukan Surat
-                    </button>
-                </form>
-            `;
-            
-            showModal(content);
-        };
+function verifyBill(id){
+  DDB.update('bills',id,{status:'verified'});
+  const b=DDB.bills.find(x=>x.id===id);const u=DDB.profiles.find(p=>p.id===b?.user_id);
+  if(u?.phone)waSend(u.phone,`✅ *Iuran ${b.month} Terverifikasi*\n\nPembayaran iuran Anda telah diverifikasi oleh pengurus. Terima kasih!\n\n— Pengurus RT Palima Indah`);
+  addLog('Iuran','Diverifikasi: '+id);nav('bills-manage');toast('Pembayaran diverifikasi');
+}
 
-        window.submitLetter = async () => {
-            const type = document.getElementById('letterType').value;
-            const purpose = document.getElementById('letterPurpose').value;
-            const docsInput = document.getElementById('letterDocs');
-            
-            if (!type || !purpose) {
-                alert('Jenis surat dan keperluan harus diisi');
-                return;
-            }
-            
-            let documents = [];
-            if (docsInput.files.length > 0) {
-                for (let file of docsInput.files) {
-                    documents.push(await uploadFile(file));
-                }
-            }
-            
-            DB.letters.push({
-                id: Date.now(),
-                userId: STATE.currentUser.id,
-                type,
-                purpose,
-                documents,
-                status: 'pending',
-                date: new Date().toISOString()
-            });
-            
-            DB.save('letters');
-            closeModal();
-            navigateTo('letters');
-            alert('Pengajuan surat berhasil dikirim!');
-        };
+function viewProof(id){const b=DDB.bills.find(x=>x.id===id);if(b?.proof)openModal('Bukti Transfer',`<img src="${b.proof}" style="width:100%;border-radius:10px" alt="Bukti">`)}
 
-        window.showTransactionModal = () => {
-            const content = `
-                <div class="modal-header">
-                    <h2 class="modal-title">Catat Transaksi</h2>
-                    <button class="close-btn" onclick="closeModal()">×</button>
-                </div>
-                
-                <form id="transactionForm">
-                    <div class="form-group">
-                        <label class="form-label">Jenis Transaksi *</label>
-                        <select id="transType" class="form-select" required>
-                            <option value="income">Pemasukan</option>
-                            <option value="expense">Pengeluaran</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Keterangan *</label>
-                        <input type="text" id="transTitle" class="form-input" placeholder="Contoh: Iuran warga Maret" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Jumlah (Rp) *</label>
-                        <input type="number" id="transAmount" class="form-input" placeholder="150000" required>
-                    </div>
-                    
-                    <button type="button" class="btn btn-primary" onclick="submitTransaction()">
-                        Simpan Transaksi
-                    </button>
-                </form>
-            `;
-            
-            showModal(content);
-        };
+function exportAllBillsPDF(){
+  const cols=['Warga','Bulan','Total','Status'];
+  const rows=DDB.bills.map(b=>{const u=DDB.profiles.find(p=>p.id===b.user_id);return[u?.name||'-',b.month,rp(b.total),b.status]});
+  exportPDF(cols,rows,'Rekap Iuran Palima Indah','rekap-iuran');
+}
 
-        window.submitTransaction = () => {
-            const type = document.getElementById('transType').value;
-            const title = document.getElementById('transTitle').value;
-            const amount = parseInt(document.getElementById('transAmount').value);
-            
-            if (!title || !amount) {
-                alert('Semua field harus diisi');
-                return;
-            }
-            
-            DB.transactions.push({
-                id: Date.now(),
-                type,
-                title,
-                amount,
-                date: new Date().toISOString()
-            });
-            
-            DB.save('transactions');
-            closeModal();
-            navigateTo('cashbook');
-        };
+/* ── COMPLAINTS MANAGE (Admin) ── */
+function pgComplaintsManage(){
+  return `
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-o" onclick="exportData('complaints')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportComplaintsPDF()">📄 Ekspor PDF</button>
+    </div>
+    ${DDB.complaints.map(c=>`
+      <div class="card" style="margin-bottom:12px"><div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <span style="font-weight:700">${c.title}</span>
+          <span class="badge-s ${c.status==='resolved'?'badge-blue':c.status==='inprogress'?'badge-green':'badge-amber'}">
+            ${c.status==='resolved'?'Selesai':c.status==='inprogress'?'Diproses':'Menunggu'}
+          </span>
+        </div>
+        <p style="font-size:.78rem;color:var(--text3);margin-bottom:6px">Oleh: ${c.user_name||'-'} • ${fdt(c.created_at)}</p>
+        <p style="font-size:.82rem;color:var(--text2);margin-bottom:8px">${c.description}</p>
+        ${c.image?`<img src="${c.image}" style="width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:8px" alt="Foto">`:''}
+        ${c.response?`<div style="padding:10px;background:var(--p-bg);border-radius:8px;font-size:.8rem;margin-bottom:8px"><strong>Tanggapan:</strong> ${c.response}</div>`:''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${c.status!=='resolved'?`
+            <button class="btn btn-o btn-sm" onclick="respondComplaint('${c.id}')">💬 Tanggapi</button>
+            <button class="btn btn-p btn-sm" onclick="resolveComplaint('${c.id}')">✓ Selesai</button>
+          `:''}
+          ${c.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen('${c.phone}','Halo ${c.user_name||''}, mengenai pengaduan: ${c.title}. ')">📲 WA</button>`:''}
+        </div>
+      </div></div>
+    `).join('')}
+  `;
+}
 
-        window.openCCTV = () => {
-            const url = document.getElementById('cctvUrl').value;
-            if (url) {
-                window.open(url, '_blank');
-            } else {
-                alert('Silakan masukkan URL dashboard CCTV terlebih dahulu');
-            }
-        };
+function respondComplaint(id){
+  openModal('Tanggapi Pengaduan',`<div class="fg"><label>Tanggapan</label><textarea id="mCpResp" placeholder="Tulis tanggapan..."></textarea></div>`,
+  `<button class="btn btn-p" onclick="saveResponse('${id}')">Kirim</button>`);
+}
+function saveResponse(id){
+  const resp=$('#mCpResp').value;if(!resp)return toast('Tulis tanggapan','error');
+  DDB.update('complaints',id,{response:resp,status:'inprogress'});
+  const c=DDB.complaints.find(x=>x.id===id);
+  if(c?.phone)waSend(c.phone,`📋 *Update Pengaduan*\nJudul: ${c.title}\n\nTanggapan pengurus:\n${resp}\n\n— RT Palima Indah`);
+  addLog('Pengaduan','Ditanggapi: '+id);closeModal();nav('complaints-manage');toast('Tanggapan dikirim');
+}
+function resolveComplaint(id){
+  DDB.update('complaints',id,{status:'resolved'});
+  const c=DDB.complaints.find(x=>x.id===id);
+  if(c?.phone)waSend(c.phone,`✅ *Pengaduan Selesai*\nJudul: ${c.title}\n\nPengaduan Anda telah ditindaklanjuti. Terima kasih!\n\n— RT Palima Indah`);
+  addLog('Pengaduan','Diselesaikan: '+id);nav('complaints-manage');toast('Pengaduan diselesaikan');
+}
+function exportComplaintsPDF(){
+  const cols=['Judul','Pelapor','Status','Tanggal'];
+  const rows=DDB.complaints.map(c=>[c.title,c.user_name||'-',c.status,fdt(c.created_at)]);
+  exportPDF(cols,rows,'Rekap Pengaduan Warga','rekap-pengaduan');
+}
 
-        window.previewFile = (input, previewId) => {
-            const preview = document.getElementById(previewId);
-            if (input.files[0]) {
-                preview.innerHTML = `<div class="file-preview">✓ ${input.files[0].name}</div>`;
-            }
-        };
+/* ── LETTERS MANAGE (Admin) ── */
+function pgLettersManage(){
+  return `
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-o" onclick="exportData('letters')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportLettersPDF()">📄 Ekspor PDF</button>
+    </div>
+    ${DDB.letters.map(l=>`
+      <div class="card" style="margin-bottom:12px"><div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <span style="font-weight:700">${l.type}</span>
+          <span class="badge-s ${l.status==='approved'?'badge-blue':l.status==='inreview'?'badge-green':'badge-amber'}">
+            ${l.status==='approved'?'Disetujui':l.status==='inreview'?'Ditinjau':'Menunggu'}
+          </span>
+        </div>
+        <p style="font-size:.78rem;color:var(--text3)">Pemohon: ${l.user_name||'-'} • ${fdt(l.created_at)}</p>
+        <p style="font-size:.82rem;color:var(--text2);margin-top:4px"><strong>Keperluan:</strong> ${l.purpose}</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+          ${l.status==='pending'?`<button class="btn btn-o btn-sm" onclick="reviewLetter('${l.id}')">👁 Tinjau</button>`:''}
+          ${l.status!=='approved'?`<button class="btn btn-p btn-sm" onclick="approveLetter('${l.id}')">✓ Setujui</button>`:''}
+          ${l.phone?`<button class="btn btn-wa btn-sm" onclick="waOpen('${l.phone}','Halo ${l.user_name||''}, mengenai pengajuan surat ${l.type}: ')">📲 WA</button>`:''}
+        </div>
+      </div></div>
+    `).join('')}
+  `;
+}
+function reviewLetter(id){DDB.update('letters',id,{status:'inreview'});addLog('Surat','Ditinjau: '+id);nav('letters-manage');toast('Surat ditinjau')}
+function approveLetter(id){
+  DDB.update('letters',id,{status:'approved'});
+  const l=DDB.letters.find(x=>x.id===id);
+  if(l?.phone)waSend(l.phone,`✅ *Surat Disetujui*\nJenis: ${l.type}\n\nSurat Anda telah disetujui. Silakan ambil di RT.\n\n— Pengurus RT Palima Indah`);
+  addLog('Surat','Disetujui: '+id);nav('letters-manage');toast('Surat disetujui');
+}
+function exportLettersPDF(){
+  const cols=['Jenis','Pemohon','Keperluan','Status','Tanggal'];
+  const rows=DDB.letters.map(l=>[l.type,l.user_name||'-',l.purpose,l.status,fdt(l.created_at)]);
+  exportPDF(cols,rows,'Rekap Pengajuan Surat','rekap-surat');
+}
 
-        window.previewFiles = (input, previewId) => {
-            const preview = document.getElementById(previewId);
-            if (input.files.length > 0) {
-                preview.innerHTML = `<div class="file-preview">✓ ${input.files.length} file dipilih</div>`;
-            }
-        };
+/* ── CASHBOOK ── */
+function pgCashbook(){
+  const inc=DDB.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=DDB.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  return `
+    <div class="stats" style="margin-bottom:20px">
+      <div class="stat-card"><div class="stat-icon green">💰</div><div class="stat-info"><h4>${rp(inc-exp)}</h4><p>Saldo</p></div></div>
+      <div class="stat-card"><div class="stat-icon blue">📈</div><div class="stat-info"><h4>${rp(inc)}</h4><p>Pemasukan</p></div></div>
+      <div class="stat-card"><div class="stat-icon red">📉</div><div class="stat-info"><h4>${rp(exp)}</h4><p>Pengeluaran</p></div></div>
+    </div>
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-p" onclick="modalAddTransaction()">+ Catat Transaksi</button>
+      <button class="btn btn-o" onclick="exportData('transactions')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportCashbookPDF()">📄 Ekspor PDF</button>
+      <button class="btn btn-o" onclick="triggerImport('transactions')">📤 Impor Excel</button>
+    </div>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="handleImport(this)">
+    <div class="card"><div class="card-body np"><div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Tanggal</th><th>Keterangan</th><th>Jenis</th><th>Jumlah</th><th>Aksi</th></tr></thead>
+        <tbody>${DDB.transactions.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t=>`
+          <tr>
+            <td style="font-size:.78rem">${fd(t.date)}</td>
+            <td style="font-weight:600">${t.title}</td>
+            <td><span class="badge-s ${t.type==='income'?'badge-green':'badge-red'}">${t.type==='income'?'Masuk':'Keluar'}</span></td>
+            <td style="font-weight:700;color:${t.type==='income'?'var(--p)':'var(--danger)'}">${t.type==='income'?'+':'-'}${rp(t.amount)}</td>
+            <td><button class="btn btn-d btn-sm" onclick="deleteTransaction('${t.id}')">🗑</button></td>
+          </tr>
+        `).join('')}</tbody>
+      </table>
+    </div></div></div>
+  `;
+}
 
-        window.searchResidents = () => {
-            const query = document.getElementById('residentSearch').value.toLowerCase();
-            const filtered = DB.residents.filter(r => 
-                r.name.toLowerCase().includes(query) ||
-                r.address.toLowerCase().includes(query) ||
-                r.ktp.includes(query)
-            );
-            
-            document.getElementById('residentList').innerHTML = filtered.map(r => `
-                <div class="resident-card">
-                    <div class="card-header">
-                        <div class="card-title">${r.name}</div>
-                        <div class="bill-status ${r.verified ? 'status-verified' : 'status-pending'}">
-                            ${r.verified ? '✓ Terverifikasi' : '⏳ Belum'}
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        📍 ${r.address}<br>
-                        📱 ${r.phone}<br>
-                        🆔 ${r.ktp}
-                    </div>
-                </div>
-            `).join('');
-        };
+function modalAddTransaction(){
+  openModal('Catat Transaksi',`
+    <div class="form-grid">
+      <div class="fg"><label>Jenis *</label><select id="mTType"><option value="income">Pemasukan</option><option value="expense">Pengeluaran</option></select></div>
+      <div class="fg"><label>Tanggal</label><input type="date" id="mTDate" value="${new Date().toISOString().slice(0,10)}"></div>
+      <div class="fg"><label>Keterangan *</label><input id="mTTitle" placeholder="Contoh: Iuran Desember"></div>
+      <div class="fg"><label>Jumlah (Rp) *</label><input type="number" id="mTAmount" placeholder="150000"></div>
+    </div>
+  `,`<button class="btn btn-p" onclick="saveTransaction()">Simpan</button>`);
+}
+function saveTransaction(){
+  const type=$('#mTType').value,title=$('#mTTitle').value,amount=parseInt($('#mTAmount').value),date=$('#mTDate').value;
+  if(!title||!amount)return toast('Keterangan dan jumlah wajib diisi','error');
+  DDB.add('transactions',{type,title,amount,date:date||new Date().toISOString()});
+  addLog('Kas','Transaksi: '+title);closeModal();nav('cashbook');toast('Transaksi dicatat');
+}
+function deleteTransaction(id){if(confirm('Hapus transaksi ini?')){DDB.remove('transactions',id);addLog('Kas','Dihapus: '+id);nav('cashbook');toast('Dihapus')}}
+function exportCashbookPDF(){
+  const cols=['Tanggal','Keterangan','Jenis','Jumlah'];
+  const rows=DDB.transactions.map(t=>[fd(t.date),t.title,t.type==='income'?'Masuk':'Keluar',rp(t.amount)]);
+  exportPDF(cols,rows,'Buku Kas RT Palima Indah','buku-kas');
+}
 
-        // ===== NAVIGATION =====
-        window.navigateTo = (page) => {
-            STATE.currentPage = page;
-            render();
-        };
+/* ── SCHEDULES ── */
+function pgSchedules(){
+  return `
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-p" onclick="modalAddSchedule()">+ Tambah Jadwal</button>
+      <button class="btn btn-o" onclick="exportData('schedules')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportSchedulesPDF()">📄 Ekspor PDF</button>
+      <button class="btn btn-o" onclick="triggerImport('schedules')">📤 Impor Excel</button>
+    </div>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="handleImport(this)">
+    <div class="card"><div class="card-body np"><div class="tbl-wrap">
+      <table>
+        <thead><tr><th></th><th>Kegiatan</th><th>Hari</th><th>Waktu</th><th>Aksi</th></tr></thead>
+        <tbody>${DDB.schedules.map(s=>`
+          <tr><td style="font-size:1.3rem">${s.icon||'📅'}</td><td style="font-weight:600">${s.title}</td><td>${s.day}</td><td>${s.time}</td>
+          <td><button class="btn btn-d btn-sm" onclick="deleteSchedule('${s.id}')">🗑</button></td></tr>
+        `).join('')}</tbody>
+      </table>
+    </div></div></div>
+  `;
+}
+function modalAddSchedule(){
+  openModal('Tambah Jadwal',`
+    <div class="form-grid">
+      <div class="fg"><label>Kegiatan *</label><input id="mSTitle"></div>
+      <div class="fg"><label>Hari *</label><input id="mSDay" placeholder="Minggu"></div>
+      <div class="fg"><label>Waktu *</label><input id="mSTime" placeholder="07:00"></div>
+      <div class="fg"><label>Ikon</label><input id="mSIcon" placeholder="🤸" value="📅"></div>
+    </div>
+  `,`<button class="btn btn-p" onclick="saveSchedule()">Simpan</button>`);
+}
+function saveSchedule(){
+  const t=$('#mSTitle').value,d=$('#mSDay').value,tm=$('#mSTime').value;
+  if(!t||!d||!tm)return toast('Semua field wajib diisi','error');
+  DDB.add('schedules',{title:t,day:d,time:tm,icon:$('#mSIcon').value||'📅'});
+  addLog('Jadwal','Ditambahkan: '+t);closeModal();nav('schedules');toast('Jadwal ditambahkan');
+}
+function deleteSchedule(id){if(confirm('Hapus?')){DDB.remove('schedules',id);nav('schedules');toast('Dihapus')}}
+function exportSchedulesPDF(){
+  exportPDF(['Kegiatan','Hari','Waktu'],DDB.schedules.map(s=>[s.title,s.day,s.time]),'Jadwal Kegiatan','jadwal-kegiatan');
+}
 
-        window.logout = () => {
-            if (confirm('Yakin ingin keluar?')) {
-                STATE.logout();
-                render();
-            }
-        };
+/* ── RONDA ── */
+function pgRonda(){
+  return `
+    <div class="btn-group" style="margin-bottom:16px">
+      <button class="btn btn-p" onclick="modalAddRonda()">+ Tambah Kelompok</button>
+      <button class="btn btn-o" onclick="exportData('ronda')">📥 Ekspor Excel</button>
+      <button class="btn btn-o" onclick="exportRondaPDF()">📄 Ekspor PDF</button>
+    </div>
+    ${DDB.ronda.map(r=>`
+      <div class="card" style="margin-bottom:12px"><div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-weight:700;font-size:.92rem">🛡️ ${r.group}</span>
+          <button class="btn btn-d btn-sm" onclick="deleteRonda('${r.id}')">🗑</button>
+        </div>
+        <p style="font-size:.82rem;color:var(--text2)"><strong>Anggota:</strong> ${r.members}</p>
+        <p style="font-size:.82rem;color:var(--text2)"><strong>Jadwal:</strong> ${r.day} • ${r.time}</p>
+      </div></div>
+    `).join('')}
+  `;
+}
+function modalAddRonda(){
+  openModal('Tambah Kelompok Ronda',`
+    <div class="form-grid">
+      <div class="fg"><label>Nama Kelompok *</label><input id="mRdGroup" placeholder="Kelompok D"></div>
+      <div class="fg"><label>Anggota *</label><input id="mRdMembers" placeholder="Nama1, Nama2, Nama3"></div>
+      <div class="fg"><label>Hari *</label><input id="mRdDay" placeholder="Minggu & Rabu"></div>
+      <div class="fg"><label>Waktu *</label><input id="mRdTime" placeholder="22:00 – 05:00"></div>
+    </div>
+  `,`<button class="btn btn-p" onclick="saveRonda()">Simpan</button>`);
+}
+function saveRonda(){
+  const g=$('#mRdGroup').value,m=$('#mRdMembers').value,d=$('#mRdDay').value,t=$('#mRdTime').value;
+  if(!g||!m||!d||!t)return toast('Semua field wajib diisi','error');
+  DDB.add('ronda',{group:g,members:m,day:d,time:t});addLog('Ronda','Ditambahkan: '+g);closeModal();nav('ronda');toast('Kelompok ditambahkan');
+}
+function deleteRonda(id){if(confirm('Hapus?')){DDB.remove('ronda',id);nav('ronda');toast('Dihapus')}}
+function exportRondaPDF(){
+  exportPDF(['Kelompok','Anggota','Hari','Waktu'],DDB.ronda.map(r=>[r.group,r.members,r.day,r.time]),'Jadwal Ronda','jadwal-ronda');
+}
 
-        // ===== RENDER =====
-        const render = () => {
-            const app = document.getElementById('app');
-            
-            if (!STATE.currentUser) {
-                app.innerHTML = LoginPage();
-                setTimeout(() => {
-                    document.getElementById('loginForm').onsubmit = (e) => {
-                        e.preventDefault();
-                        const username = document.getElementById('username').value;
-                        const password = document.getElementById('password').value;
-                        
-                        const user = DB.users.find(u => u.username === username && u.password === password);
-                        
-                        if (user) {
-                            STATE.setUser(user);
-                            render();
-                        } else {
-                            alert('Username atau password salah!');
-                        }
-                    };
-                }, 0);
-                return;
-            }
-            
-            const pages = {
-                home: HomePage,
-                bills: BillsPage,
-                complaints: ComplaintsPage,
-                letters: LettersPage,
-                residents: ResidentsPage,
-                cashbook: CashbookPage,
-                cctv: CCTVPage,
-                activity: HomePage,
-                info: HomePage,
-                profile: () => `<div class="container"><div class="empty-state"><div class="empty-icon">👤</div><div class="empty-text">Halaman profil dalam pengembangan</div></div>${BottomNav()}</div>`,
-                verify: () => `<div class="container"><div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Halaman verifikasi dalam pengembangan</div></div>${BottomNav()}</div>`
-            };
-            
-            app.innerHTML = `<div class="container">${(pages[STATE.currentPage] || HomePage)()}</div>`;
-            
-            // Update clock
-            if (STATE.currentPage === 'home') {
-                setInterval(() => {
-                    const timeEl = document.getElementById('currentTime');
-                    if (timeEl) {
-                        const now = new Date();
-                        timeEl.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                    }
-                }, 1000);
-            }
-        };
+/* ── CCTV ── */
+function pgCCTV(){
+  const url=S.settings.cctv_url||'';
+  return `
+    <div class="card"><div class="card-body" style="text-align:center">
+      <div style="font-size:4rem;margin-bottom:16px">📹</div>
+      <h3 style="margin-bottom:8px">Dashboard CCTV</h3>
+      <p style="color:var(--text3);font-size:.85rem;margin-bottom:20px">Buka dashboard CCTV yang terhubung ke sistem keamanan lingkungan.</p>
+      ${url?`
+        <button class="btn btn-p" onclick="window.open('${url}','_blank')" style="margin-bottom:12px">🔗 Buka Dashboard CCTV</button>
+        <p style="font-size:.72rem;color:var(--text3)">URL: ${url}</p>
+      `:`
+        <div style="padding:16px;background:var(--p-bg);border-radius:12px;font-size:.82rem;color:var(--text2)">
+          Belum ada URL CCTV. Atur di menu <strong>Pengaturan → CCTV URL</strong>.
+        </div>
+      `}
+    </div></div>
+  `;
+}
 
-        // ===== INIT =====
-        window.addEventListener('DOMContentLoaded', () => {
-            DB.init();
-            
-            setTimeout(() => {
-                document.getElementById('loadingScreen').classList.add('hide');
-                setTimeout(() => {
-                    document.getElementById('loadingScreen').remove();
-                }, 500);
-                render();
-            }, 2500);
-        });
-    </script>
+/* ── SETTINGS ── */
+function pgSettings(){
+  const s=S.settings;
+  return `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><h3>🏠 Identitas Perumahan</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg"><label>Nama Perumahan</label><input id="sName" value="${s.name||'Palima Indah Residence'}" onchange="saveSetting('name',this.value)"></div>
+          <div class="fg"><label>Alamat</label><input id="sAddr" value="${s.address||''}" placeholder="Jl. ..." onchange="saveSetting('address',this.value)"></div>
+          <div class="fg"><label>No. WA RT</label><input id="sPhone" value="${s.phone||''}" placeholder="6281..." onchange="saveSetting('phone',this.value)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><h3>🎨 Tampilan</h3></div>
+      <div class="card-body">
+        <div class="setting-row">
+          <div><label>Mode Gelap</label><br><small>Aktifkan tema gelap</small></div>
+          <div class="toggle ${S.theme==='dark'?'on':''}" onclick="toggleTheme();nav('settings')"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><h3>📲 WhatsApp</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg"><label>WA Business API URL</label><input value="${s.wa_api_url||''}" placeholder="https://graph.facebook.com/v18.0/..." onchange="saveSetting('wa_api_url',this.value)"></div>
+          <div class="fg"><label>API Token</label><input type="password" value="${s.wa_api_key||''}" placeholder="Bearer token" onchange="saveSetting('wa_api_key',this.value)"></div>
+        </div>
+        <p style="font-size:.72rem;color:var(--text3);margin-top:10px">Jika tidak diisi, WhatsApp akan dibuka secara manual (wa.me link). Jika diisi, pesan terkirim otomatis via API.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><h3>📹 CCTV</h3></div>
+      <div class="card-body">
+        <div class="fg"><label>URL Dashboard CCTV</label><input value="${s.cctv_url||''}" placeholder="https://cctv.example.com" onchange="saveSetting('cctv_url',this.value)"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><h3>🔗 Supabase</h3></div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="fg"><label>Project URL</label><input value="${s.sb_url||SUPABASE_URL}" placeholder="https://xxx.supabase.co" onchange="saveSetting('sb_url',this.value)"></div>
+          <div class="fg"><label>Anon Key</label><input type="password" value="${s.sb_key||''}" placeholder="eyJhbGciOi..." onchange="saveSetting('sb_key',this.value)"></div>
+        </div>
+        <p style="font-size:.72rem;color:var(--text3);margin-top:10px">Status: <strong style="color:${DEMO?'var(--danger)':'var(--p)'}">${DEMO?'Demo Mode (localStorage)':'Terhubung ke Supabase'}</strong></p>
+        ${DEMO?`<button class="btn btn-p btn-sm" style="margin-top:10px" onclick="reconnectSupabase()">Hubungkan Supabase</button>`:''}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>📋 Log Aktivitas</h3></div>
+      <div class="card-body np"><div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Detail</th></tr></thead>
+          <tbody>${DDB.logs.slice(-20).reverse().map(l=>`
+            <tr><td style="font-size:.72rem">${fdt(l.time)}</td><td>${l.user}</td><td>${l.action}</td><td style="font-size:.78rem;color:var(--text3)">${l.detail}</td></tr>
+          `).join('')}</tbody>
+        </table>
+      </div></div>
+    </div>
+  `;
+}
+
+function saveSetting(key,val){S.settings[key]=val;localStorage.setItem('appSettings',JSON.stringify(S.settings));toast('Pengaturan disimpan')}
+
+function reconnectSupabase(){
+  const url=S.settings.sb_url,key=S.settings.sb_key;
+  if(!url||!key)return toast('Isi Project URL dan Anon Key terlebih dahulu','error');
+  try{
+    sb=supabase.createClient(url,key);DEMO=false;
+    toast('Supabase terhubung! Muat ulang halaman untuk efek penuh.');
+    addLog('Sistem','Supabase dihubungkan');nav('settings');
+  }catch(e){toast('Gagal: '+e.message,'error')}
+}
+
+/* ═══════════════════════════════════════
+   IMPORT / EXPORT GENERIC
+   ═══════════════════════════════════════ */
+let _importTarget='';
+function triggerImport(target){_importTarget=target;const f=$('#importFile')||document.querySelector('input[type=file][id=importFile]');if(f){f.value='';f.click()}}
+
+async function handleImport(input){
+  if(!input.files[0])return;
+  try{
+    const rows=await importExcel(input.files[0]);
+    if(!rows.length)return toast('File kosong','error');
+    rows.forEach(r=>{
+      r.id=uid();r.created_at=new Date().toISOString();
+      if(_importTarget==='residents'){r.verified=false}
+      DDB[_importTarget].push(r);
+    });
+    DDB.save(_importTarget);
+    addLog('Impor',`${rows.length} baris ke ${_importTarget}`);
+    nav(S.page);toast(`${rows.length} data berhasil diimpor`);
+  }catch(e){toast('Gagal impor: '+e.message,'error')}
+}
+
+function exportData(type){
+  const map={
+    'residents':{data:DDB.residents,name:'data-warga'},
+    'bills':{data:DDB.bills.map(b=>{const u=DDB.profiles.find(p=>p.id===b.user_id);return{Warga:u?.name||'-',Bulan:b.month,Total:b.total,Status:b.status}}),name:'rekap-iuran'},
+    'my-bills':{data:DDB.bills.filter(b=>b.user_id===S.profile?.id).map(b=>({Bulan:b.month,Total:b.total,Status:b.status})),name:'iuran-saya'},
+    'transactions':{data:DDB.transactions.map(t=>({Tanggal:t.date,Keterangan:t.title,Jenis:t.type==='income'?'Masuk':'Keluar',Jumlah:t.amount})),name:'buku-kas'},
+    'complaints':{data:DDB.complaints.map(c=>({Judul:c.title,Pelapor:c.user_name||'-',Status:c.status,Tanggal:fdt(c.created_at)})),name:'pengaduan'},
+    'letters':{data:DDB.letters.map(l=>({Jenis:l.type,Pemohon:l.user_name||'-',Keperluan:l.purpose,Status:l.status,Tanggal:fdt(l.created_at)})),name:'surat'},
+    'announcements':{data:DDB.announcements.map(a=>({Judul:a.title,Isi:a.content,Prioritas:a.priority,Tanggal:fdt(a.created_at)})),name:'pengumuman'},
+    'schedules':{data:DDB.schedules.map(s=>({Kegiatan:s.title,Hari:s.day,Waktu:s.time})),name:'jadwal'},
+    'ronda':{data:DDB.ronda.map(r=>({Kelompok:r.group,Anggota:r.members,Hari:r.day,Waktu:r.time})),name:'jadwal-ronda'},
+  };
+  const m=map[type];if(!m)return;
+  exportExcel(m.data,m.name);
+  addLog('Ekspor','Excel: '+type);toast('File Excel diunduh');
+}
+
+/* ═══════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════ */
+function showLogin(){$('#app').style.display='none';$('#loginPage').style.display='block'}
+function showApp(){
+  $('#loginPage').style.display='none';$('#app').style.display='block';
+  $('#sfName').textContent=S.profile?.name||'-';
+  $('#sfRole').textContent=S.profile?.role==='pengurus'?'Pengurus RT':'Warga';
+  $('#sfAvatar').textContent=initials(S.profile?.name||'?');
+  applyTheme();renderNav();nav('home');
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  DDB.init();
+
+  // Splash
+  setTimeout(()=>{
+    $('#splash').classList.add('hide');
+    setTimeout(()=>$('#splash').remove(),500);
+    // Check session
+    if(restoreSession()){showApp()}else{showLogin()}
+  },2000);
+
+  // Fallback splash removal
+  setTimeout(()=>{const sp=$('#splash');if(sp)sp.remove()},2500);
+});
+</script>
 </body>
 </html>
