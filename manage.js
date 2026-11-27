@@ -10,7 +10,7 @@
     profiles: ['Profil pengguna', ['users-manage'], [...contactFields, ['verified', 'Terverifikasi', 'checkbox']]],
     residents: ['Data warga', ['residents'], contactFields],
     announcements: ['Pengumuman', ['announcements'], [
-      ['title', 'Judul'], ['content', 'Isi', 'textarea'], ['priority', 'Prioritas', {medium: 'Info Biasa', high: 'Penting'}],
+      ['title', 'Judul'], ['content', 'Isi', 'textarea'], ['priority', 'Prioritas', {medium: 'Info Biasa', high: 'Penting'}], ['public', 'Tampilkan tanpa login (publik)', 'checkbox'],
     ]],
     bills: ['Tagihan', ['bills-manage'], [['month', 'Bulan']]],
     complaints: ['Pengaduan', ['complaints-manage', 'my-complaints'], [['title', 'Judul'], ['description', 'Deskripsi', 'textarea']]],

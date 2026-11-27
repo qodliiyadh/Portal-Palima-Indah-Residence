@@ -20,6 +20,12 @@ Data lama di localStorage tidak ikut pindah otomatis. Gunakan proyek uji terlebi
 
 Salin **isi** folder ini, termasuk `.github/workflows/pages.yml`, ke root repository GitHub. Push ke branch `main`, lalu pilih **Settings → Pages → Source → GitHub Actions**. Workflow menerbitkan frontend saja; file SQL dijalankan terpisah di Supabase. Atur Site URL pada Authentication Supabase ke alamat Pages.
 
+## Laman publik dan jadwal salat
+
+Jalankan `supabase/03_public_announcements.sql` di SQL Editor. Di menu **Pengumuman**, centang **Tampilkan tanpa login** hanya untuk informasi yang aman dibaca siapa pun. Pengumuman lama tetap privat sampai ditandai publik.
+
+Untuk menampilkan jadwal salat resmi di dalam portal, deploy fungsi `kemenag-prayer` sesuai [panduan jadwal salat](PRAYER.md). Lokasi awal adalah Banten → Kota Serang. Kecamatan Curug ditampilkan sebagai konteks lokasi; jadwal Kemenag tersedia pada tingkat kota/kabupaten. Tanpa fungsi tersebut, portal memberikan tautan resmi Kemenag dan tidak menampilkan jam perkiraan.
+
 ## Jadwal ronda
 
 Sabtu malam (WIB), bergilir menurut urutan kelompok. Pengurus dapat mengubah anggota dan jam, menugaskan kelompok berbeda pada tanggal tertentu, atau meniadakan jadwal. Ekspor mengikuti bulan yang sedang tampil. Perubahan susunan kelompok menghitung ulang rotasi otomatis, termasuk untuk bulan yang lalu.

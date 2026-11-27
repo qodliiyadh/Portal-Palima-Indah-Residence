@@ -244,6 +244,7 @@ tr:last-child td{border-bottom:none}
       <button class="hamburger" onclick="toggleSidebar()">☰</button>
       <span class="topbar-title" id="pageTitle">Beranda</span>
       <div class="topbar-actions">
+        <button id="showPublicSchedule" title="Jadwal salat dan laman publik" aria-label="Jadwal salat dan laman publik">🕌</button>
         <button onclick="nav('announcements')" title="Pengumuman">🔔<span class="notif-dot"></span></button>
         <button onclick="toggleTheme()" title="Tema" id="themeBtn">🌙</button>
       </div>
@@ -255,10 +256,13 @@ tr:last-child td{border-bottom:none}
   <div class="bottom-nav"><div class="bottom-nav-inner" id="bottomNav"></div></div>
 </div>
 
+<main class="public-page" id="publicPage" hidden></main>
+
 <!-- Login page (separate from app shell) -->
 <div id="loginPage" style="display:none">
   <div class="login-page">
     <div class="login-card">
+      <button class="btn btn-o btn-sm" type="button" id="backPublic">← Beranda Publik</button>
       <div class="login-logo">
         <div>🏘️</div>
         <h1>Palima Indah Residence</h1>
@@ -416,16 +420,6 @@ function waLink(phone,text){
 function waOpen(phone,text){ window.open(waLink(phone,text),'_blank','noopener,noreferrer') }
 
 function waSend(phone,text){ waOpen(phone,text) }
-
-/* ── Prayer times (simple calculation) ── */
-function prayerTimes(){
-  const h=new Date().getHours();
-  const list=[
-    {n:'Subuh',t:'04:32',s:4,e:6},{n:'Dzuhur',t:'11:55',s:12,e:15},{n:'Ashar',t:'15:12',s:15,e:18},
-    {n:'Maghrib',t:'17:58',s:18,e:19},{n:'Isya',t:'19:10',s:19,e:23}
-  ];
-  return list.map(p=>({...p,now:h>=p.s&&h<p.e}));
-}
 
 /* ── Import / Export ── */
 function exportExcel(data, filename, sheetName='Data'){
@@ -609,7 +603,6 @@ function renderPage(){
 
 /* ── HOME ── */
 function pgHome(){
-  const pt=prayerTimes();
   const isAdmin=isStaff();
   const totalIncome=DDB.transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const totalExpense=DDB.transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
@@ -622,14 +615,11 @@ function pgHome(){
       <p style="color:var(--text3);font-size:.85rem">${fd(new Date())} — ${new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})} WIB</p>
     </div>
 
-    <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,var(--p),var(--p-light));color:#fff;border:none">
-      <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div>
-          <div style="font-size:.75rem;opacity:.85">Jadwal Sholat Hari Ini</div>
-          <div class="prayer-row" style="margin-top:8px">
-            ${pt.map(p=>`<div class="pr-item ${p.now?'now':''}"><div class="pr-n">${p.n}</div><div class="pr-t">${p.t}</div></div>`).join('')}
-          </div>
-        </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-body">
+        <h3>Jadwal Salat · Kota Serang</h3>
+        <p style="margin:8px 0 12px">Lihat jadwal resmi Kemenag dan pilih wilayah serta tanggal.</p>
+        <button class="btn btn-p" onclick="document.getElementById('showPublicSchedule').click()">Lihat Jadwal Salat</button>
       </div>
     </div>
 
@@ -712,12 +702,13 @@ function modalAddAnnouncement(){
     <div class="fg" style="margin-bottom:12px"><label>Judul</label><input id="mAnTitle"></div>
     <div class="fg" style="margin-bottom:12px"><label>Isi</label><textarea id="mAnContent"></textarea></div>
     <div class="fg"><label>Prioritas</label><select id="mAnPrio"><option value="medium">Info Biasa</option><option value="high">Penting</option></select></div>
+    <label style="display:block;margin-top:14px"><input type="checkbox" id="mAnPublic"> Tampilkan di landing page (dapat dilihat tanpa login)</label>
   `,`<button class="btn btn-p" onclick="saveAnnouncement()">Simpan</button>`);
 }
 function saveAnnouncement(){
   const t=$('#mAnTitle').value,c=$('#mAnContent').value,p=$('#mAnPrio').value;
   if(!t||!c)return toast('Judul dan isi wajib diisi','error');
-  DDB.add('announcements',{title:t,content:c,priority:p});
+  DDB.add('announcements',{title:t,content:c,priority:p,public:$('#mAnPublic').checked});
   addLog('Pengumuman','Ditambahkan: '+t);closeModal();nav('announcements');toast('Pengumuman ditambahkan');
 }
 function deleteAnnouncement(id){if(confirm('Hapus pengumuman ini?')){DDB.remove('announcements',id);addLog('Pengumuman','Dihapus');nav('announcements');toast('Dihapus')}}
@@ -1407,6 +1398,9 @@ function showApp(){
 <script src="manage.js"></script>
 <script src="reports.js"></script>
 <script src="excel.js"></script>
+<script src="demo.js"></script>
 <script src="backend.js"></script>
+<script src="prayer.js"></script>
+<script src="landing.js"></script>
 </body>
 </html>
